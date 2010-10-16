@@ -1,0 +1,90 @@
+// !$*UTF8*$!
+{
+	A016A9EA12261F15004F6B52 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = A016A9F712261F15004F6B52 /* riak_pb-objc */;
+		activeTarget = A016A9F412261F15004F6B52 /* riak_pb-objc */;
+		codeSenseManager = A016A9EE12261F15004F6B52 /* Code sense */;
+		executables = (
+			A016A9F712261F15004F6B52 /* riak_pb-objc */,
+		);
+		ignoreBreakpointsInProjectsDict = {
+		};
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					341,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 305434388;
+			PBXWorkspaceStateSaveDate = 305434388;
+		};
+		sourceControlManager = A0D5D41B1230C2340018D8E9 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	A016A9EE12261F15004F6B52 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	A016A9F412261F15004F6B52 /* riak_pb-objc */ = {
+		activeExec = 0;
+		executables = (
+			A016A9F712261F15004F6B52 /* riak_pb-objc */,
+		);
+	};
+	A016A9F712261F15004F6B52 /* riak_pb-objc */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = "riak_pb-objc";
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	A0D5D41B1230C2340018D8E9 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+}

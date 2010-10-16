@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'riak_pb-objc' target in the 'riak_pb-objc' project
+//
+
+#ifdef __OBJC__
+#endif
+

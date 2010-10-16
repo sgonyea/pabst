@@ -1,0 +1,5 @@
+*.o
+*.bundle
+Makefile
+riakclient.pb.*
+.DS_Store
