@@ -15,6 +15,7 @@
 - (id)init;
 - (id)initWithService:(OFString *)port onNode:(OFString *)node;
 - (void)connectToService:(OFString *)port onNode:(OFString *)node;
+- (void)sendEmptyMessageWithCode:(OFNumber *)msgCode;
 - (void)sendMessageWithLength:(OFNumber *)length message:(char *)message messageCode:(OFNumber *)code;
 - (void)dealloc;
 
@@ -26,9 +27,10 @@
 - (BOOL)pingRequest;  // Message Code Only
 - (BOOL)pingGetResponse; // Message Code Only
 
-- (OFNumber *)clientIdRequest;  // Message Code Only
+- (OFNumber *)getClientId;  // Message Code Only
 - (OFNumber *)clientIdGetResponse;
 
+- (BOOL)setClientId;
 - (BOOL)setClientId:(OFString *)clientId;
 - (BOOL)setClientIdResponse; // Message Code Only
 
