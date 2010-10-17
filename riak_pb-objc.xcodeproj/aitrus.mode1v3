@@ -197,7 +197,48 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array/>
+	<array>
+		<dict>
+			<key>Content</key>
+			<dict>
+				<key>PBXProjectModuleGUID</key>
+				<string>A06D15AF126AC26C0074E61B</string>
+				<key>PBXProjectModuleLabel</key>
+				<string>MessageCodes.h</string>
+				<key>PBXSplitModuleInNavigatorKey</key>
+				<dict>
+					<key>Split0</key>
+					<dict>
+						<key>PBXProjectModuleGUID</key>
+						<string>A06D15B0126AC26C0074E61B</string>
+						<key>PBXProjectModuleLabel</key>
+						<string>MessageCodes.h</string>
+						<key>_historyCapacity</key>
+						<integer>0</integer>
+						<key>bookmark</key>
+						<string>A06D15BB126ACBDA0074E61B</string>
+						<key>history</key>
+						<array>
+							<string>A06D15A9126AC14B0074E61B</string>
+						</array>
+					</dict>
+					<key>SplitCount</key>
+					<string>1</string>
+				</dict>
+				<key>StatusBarVisibility</key>
+				<true/>
+			</dict>
+			<key>Geometry</key>
+			<dict>
+				<key>Frame</key>
+				<string>{{0, 20}, {994, 655}}</string>
+				<key>PBXModuleWindowStatusBarHidden2</key>
+				<false/>
+				<key>RubberWindowFrame</key>
+				<string>638 287 994 696 0 0 1680 1028 </string>
+			</dict>
+		</dict>
+	</array>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -273,7 +314,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>20</integer>
+									<integer>26</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -316,7 +357,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>rb_pabst.m</string>
+								<string>RiakProtobuf.mm</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,11 +365,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>rb_pabst.m</string>
+										<string>RiakProtobuf.mm</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A06D15A8126AC0EC0074E61B</string>
+										<string>A06D15BA126ACBDA0074E61B</string>
 										<key>history</key>
 										<array>
 											<string>A06D14F1126A9FE90074E61B</string>
@@ -348,7 +389,6 @@
 											<string>A06D1588126ABC2A0074E61B</string>
 											<string>A06D158D126ABC4F0074E61B</string>
 											<string>A06D158E126ABC4F0074E61B</string>
-											<string>A06D158F126ABC4F0074E61B</string>
 											<string>A06D1590126ABC4F0074E61B</string>
 											<string>A06D1591126ABC4F0074E61B</string>
 											<string>A06D1593126ABC4F0074E61B</string>
@@ -356,10 +396,11 @@
 											<string>A06D1598126ABC4F0074E61B</string>
 											<string>A06D159B126ABD5F0074E61B</string>
 											<string>A06D15A3126AC03E0074E61B</string>
-											<string>A06D15A4126AC03E0074E61B</string>
-											<string>A06D15A5126AC03E0074E61B</string>
 											<string>A06D15A6126AC03E0074E61B</string>
-											<string>A06D1592126ABC4F0074E61B</string>
+											<string>A06D15AA126AC26C0074E61B</string>
+											<string>A06D15AB126AC26C0074E61B</string>
+											<string>A06D15AC126AC26C0074E61B</string>
+											<string>A06D15AD126AC26C0074E61B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -558,6 +599,7 @@
 	<key>WindowOrderList</key>
 	<array>
 		<string>A0D5D4191230C2330018D8E9</string>
+		<string>A06D15AF126AC26C0074E61B</string>
 		<string>/Volumes/Buddha/Sites/workspace/rpb_objc/riak_pb-objc.xcodeproj</string>
 	</array>
 	<key>WindowString</key>

@@ -77,7 +77,12 @@ extern "C" {
 
 - (OFNumber *)getClientId {
   [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_GET_CLIENT_ID_REQUEST]];
-  return [self clientIdGetResponse];
+
+  OFNumber *newClientId = [self clientIdGetResponse];
+
+  client_id = [newClientId copy];
+
+  return newClientId;
 }
 
 - (OFNumber *)clientIdGetResponse {
@@ -93,7 +98,15 @@ extern "C" {
   return [[OFNumber numberWithInt:*(int *)pbMsg.client_id().c_str()] retain];
 }
 
-// @TODO: Set Client ID
+// @TODO: Rest of Set Client ID
+- (BOOL)setClientId {
+  RpbSetClientIdReq protobuf;
+  if (!clientId) {
+    [self getClientId];
+  }
+  // @TODO: Set the client ID
+  return YES;
+}
 
 - (OFDictionary *)getServerInfoRequest {
   [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_GET_SERVER_INFO_REQUEST]];
