@@ -6,7 +6,7 @@
 //  Copyright (c) 2010 Inherently Lame Inc. All rights reserved.
 //
 #import <ObjFW/ObjFW.h>
-#import <stdint.h>
+#import "ObjFW+Ruby.h"
 #import "MessageCodes.h"
 
 @interface RiakProtobuf : OFObject {
@@ -37,13 +37,13 @@
 - (OFDictionary *)getServerInfoRequest; // Message Code Only
 - (OFDictionary *)getServerInfoResponse;
 
-- (OFDictionary *)getKeyFromBucket:(OFString *)bucket key:(OFString *)key quorum:(OFNumber *)quorum;
+- (OFDictionary *)getFromBucket:(OFString *)bucket atKey:(OFString *)key quorum:(OFNumber *)quorum;
 - (OFDictionary *)getKeyResponse;
 
-- (OFDictionary *)putKeyInBucket:(OFString *)bucket key:(OFString *)key content:(OFDictionary *)content withBody:(BOOL)body quorum:(OFNumber *)quorum commit:(OFNumber *)commit;
+- (OFDictionary *)putInBucket:(OFString *)bucket withKey:(OFString *)key content:(OFDictionary *)content withBody:(BOOL)body quorum:(OFNumber *)quorum commit:(OFNumber *)commit;
 - (OFDictionary *)putKeyResponse;
 
-- (BOOL)deleteKey:(OFString *)key inBucket:(OFString *)bucket replicas:(OFNumber *)replicas;
+- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket replicas:(OFNumber *)replicas;
 - (BOOL)deleteKeyResponse; // Message Code Only
 
 - (OFArray *)listBucketsRequest; // Message Code Only

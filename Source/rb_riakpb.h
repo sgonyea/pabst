@@ -6,6 +6,7 @@
 //  Copyright (c) 2010 Inherently Lame, Inc. All rights reserved.
 //
 #import <ObjFW/ObjFW.h>
+#import "ObjFW+Ruby.h"
 #import <stdint.h>
 #import "RiakProtobuf.h"
 #import "rb_pabst.h"

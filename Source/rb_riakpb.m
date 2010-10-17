@@ -18,9 +18,11 @@ void Init_Riakpb() {
   rb_define_alloc_func(rb_cPabst, pabst_allocate);
 
   rb_define_method(rb_cPabst, "initialize",           pabst_initialize,             0);
-  rb_define_method(rb_cPabst, "list_keys",            rb_list_keys_request,         1);
+//  rb_define_method(rb_cPabst, "ping?",                rb_ping_request,              0);
   rb_define_method(rb_cPabst, "get_client_id",        rb_get_client_id_request,     0);
   rb_define_method(rb_cPabst, "server_info",          rb_get_server_info_request,   0);
+  rb_define_method(rb_cPabst, "get_key",              rb_get_key_request,           2);
+  rb_define_method(rb_cPabst, "list_keys",            rb_list_keys_request,         1);
 }
 
 VALUE pabst_allocate(VALUE klass) {
