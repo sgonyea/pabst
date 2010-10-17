@@ -1,4 +1,6 @@
+
 #import <ObjFW/ObjFW.h>
+#import "ObjFW+Ruby.h"
 #import <stdint.h>
 #import "RiakProtobuf.h"
 #import "ruby.h"

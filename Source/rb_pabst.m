@@ -3,7 +3,6 @@
 VALUE rb_ping_request(VALUE self) {
   RiakProtobuf   *riakpb  = Get_RiakProtobuf(self);
   BOOL response;
-  
 }
 */
 VALUE rb_get_client_id_request(VALUE self) {
@@ -25,7 +24,6 @@ VALUE rb_get_server_info_request(VALUE self) {
   VALUE           rb_server_info;
 
   server_info     = [riakpb getServerInfoRequest];
-
   rb_server_info  = [server_info toRuby];
 
   [server_info release];

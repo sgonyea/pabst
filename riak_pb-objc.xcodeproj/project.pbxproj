@@ -20,6 +20,8 @@
 		A06D14ED126A981C0074E61B /* OFNumber+Ruby.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14E8126A981C0074E61B /* OFNumber+Ruby.m */; };
 		A06D14EE126A981C0074E61B /* OFString+Ruby.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14E9126A981C0074E61B /* OFString+Ruby.m */; };
 		A06D152C126AA7FF0074E61B /* OFArray+Ruby.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D152B126AA7FF0074E61B /* OFArray+Ruby.m */; };
+		A06D1550126AAEB30074E61B /* OFMutableArray+Ruby.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D154F126AAEB30074E61B /* OFMutableArray+Ruby.m */; };
+		A06D1574126AB9B10074E61B /* RiakProtobuf+Cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */; };
 		A0A72BD6122636B7006C6D76 /* libprotobuf-lite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */; };
 		A0A72BD7122636B7006C6D76 /* libprotobuf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */; };
 		A0A72BD8122636B7006C6D76 /* libprotoc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD5122636B7006C6D76 /* libprotoc.dylib */; };
@@ -69,6 +71,10 @@
 		A06D14E9126A981C0074E61B /* OFString+Ruby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OFString+Ruby.m"; sourceTree = "<group>"; };
 		A06D152A126AA7FF0074E61B /* OFArray+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFArray+Ruby.h"; sourceTree = "<group>"; };
 		A06D152B126AA7FF0074E61B /* OFArray+Ruby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OFArray+Ruby.m"; sourceTree = "<group>"; };
+		A06D154E126AAEB30074E61B /* OFMutableArray+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFMutableArray+Ruby.h"; sourceTree = "<group>"; };
+		A06D154F126AAEB30074E61B /* OFMutableArray+Ruby.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OFMutableArray+Ruby.m"; sourceTree = "<group>"; };
+		A06D1572126AB9B10074E61B /* RiakProtobuf+Cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RiakProtobuf+Cpp.h"; sourceTree = "<group>"; };
+		A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RiakProtobuf+Cpp.mm"; sourceTree = "<group>"; };
 		A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libprotobuf-lite.dylib"; path = "/usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf-lite.dylib"; sourceTree = "<absolute>"; };
 		A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotobuf.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf.dylib; sourceTree = "<absolute>"; };
 		A0A72BD5122636B7006C6D76 /* libprotoc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotoc.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotoc.dylib; sourceTree = "<absolute>"; };
@@ -104,11 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				A06D14DD126A97490074E61B /* extconf.rb */,
-				A06D14DE126A97490074E61B /* riakclient.pb.mm */,
-				A06D14DF126A97490074E61B /* riakclient.proto */,
-				A06D14E0126A97490074E61B /* RiakProtobuf.h */,
-				A06D14E1126A97490074E61B /* RiakProtobuf.mm */,
-				A06D14E2126A97490074E61B /* tst.rb */,
+				E546F9011236EAE40016B07A /* MessageCodes.h */,
 				A06D14D1126A97350074E61B /* ObjFW+Ruby.h */,
 				A06D152A126AA7FF0074E61B /* OFArray+Ruby.h */,
 				A06D152B126AA7FF0074E61B /* OFArray+Ruby.m */,
@@ -118,6 +120,8 @@
 				A06D14E6126A981C0074E61B /* OFDictionary+Ruby.m */,
 				A06D14D4126A97350074E61B /* OFList+Ruby.h */,
 				A06D14E7126A981C0074E61B /* OFList+Ruby.m */,
+				A06D154E126AAEB30074E61B /* OFMutableArray+Ruby.h */,
+				A06D154F126AAEB30074E61B /* OFMutableArray+Ruby.m */,
 				A06D14D5126A97350074E61B /* OFNumber+Ruby.h */,
 				A06D14E8126A981C0074E61B /* OFNumber+Ruby.m */,
 				A06D14D6126A97350074E61B /* OFString+Ruby.h */,
@@ -126,8 +130,14 @@
 				A06D14D8126A97350074E61B /* rb_pabst.m */,
 				A06D14D9126A97350074E61B /* rb_riakpb.h */,
 				A06D14DA126A97350074E61B /* rb_riakpb.m */,
-				E546F9011236EAE40016B07A /* MessageCodes.h */,
+				A06D14DE126A97490074E61B /* riakclient.pb.mm */,
+				A06D14DF126A97490074E61B /* riakclient.proto */,
+				A06D14E0126A97490074E61B /* RiakProtobuf.h */,
+				A06D14E1126A97490074E61B /* RiakProtobuf.mm */,
+				A06D1572126AB9B10074E61B /* RiakProtobuf+Cpp.h */,
+				A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */,
 				A016AA0712261F47004F6B52 /* riakclient.pb.h */,
+				A06D14E2126A97490074E61B /* tst.rb */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -227,6 +237,8 @@
 				A06D14ED126A981C0074E61B /* OFNumber+Ruby.m in Sources */,
 				A06D14EE126A981C0074E61B /* OFString+Ruby.m in Sources */,
 				A06D152C126AA7FF0074E61B /* OFArray+Ruby.m in Sources */,
+				A06D1550126AAEB30074E61B /* OFMutableArray+Ruby.m in Sources */,
+				A06D1574126AB9B10074E61B /* RiakProtobuf+Cpp.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

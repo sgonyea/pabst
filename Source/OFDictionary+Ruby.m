@@ -10,7 +10,7 @@
    ^(id key, id obj, BOOL *stop) {
      VALUE keyValue = [key toRuby];
      VALUE objValue = [obj toRuby];
-     
+
      if (!keyValue) { // not! keyValue
        keyValue = Qnil;
      }

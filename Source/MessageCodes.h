@@ -3,7 +3,6 @@
 //  riak_pb-objc
 //
 //  Created by Scott Gonyea on 8/30/10.
-//  Copyright (c) 2010 Inherently Lame, Inc. All rights reserved.
 //
 #ifndef _PABST_MC_
 # define _PABST_MC_

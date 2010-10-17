@@ -273,7 +273,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>12</integer>
+									<integer>30</integer>
 									<integer>1</integer>
 									<integer>0</integer>
 								</array>
@@ -316,7 +316,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>OFDataArray+Ruby.m</string>
+								<string>tst.rb</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -324,34 +324,42 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>OFDataArray+Ruby.m</string>
+										<string>tst.rb</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>A06D1549126AAA4B0074E61B</string>
+										<string>A06D159A126ABCE80074E61B</string>
 										<key>history</key>
 										<array>
 											<string>A06D14F1126A9FE90074E61B</string>
-											<string>A06D14F2126A9FE90074E61B</string>
 											<string>A06D14F3126A9FE90074E61B</string>
-											<string>A06D14F4126A9FE90074E61B</string>
-											<string>A06D14F6126A9FE90074E61B</string>
-											<string>A06D14F7126A9FE90074E61B</string>
-											<string>A06D14F8126A9FE90074E61B</string>
-											<string>A06D14F9126A9FE90074E61B</string>
 											<string>A06D14FC126A9FE90074E61B</string>
-											<string>A06D1504126AA0EE0074E61B</string>
-											<string>A06D151C126AA5ED0074E61B</string>
 											<string>A06D152D126AA93A0074E61B</string>
-											<string>A06D1530126AA93A0074E61B</string>
-											<string>A06D1531126AA93A0074E61B</string>
 											<string>A06D153C126AA9AA0074E61B</string>
-											<string>A06D153E126AA9B70074E61B</string>
 											<string>A06D1541126AA9C60074E61B</string>
 											<string>A06D1543126AA9DA0074E61B</string>
-											<string>A06D1546126AAA370074E61B</string>
-											<string>A06D1547126AAA370074E61B</string>
-											<string>A06D152F126AA93A0074E61B</string>
+											<string>A06D1562126AB79C0074E61B</string>
+											<string>A06D1563126AB79C0074E61B</string>
+											<string>A06D1564126AB79C0074E61B</string>
+											<string>A06D1565126AB79C0074E61B</string>
+											<string>A06D1566126AB79C0074E61B</string>
+											<string>A06D1567126AB79C0074E61B</string>
+											<string>A06D156A126AB8B30074E61B</string>
+											<string>A06D1588126ABC2A0074E61B</string>
+											<string>A06D158C126ABC4F0074E61B</string>
+											<string>A06D158D126ABC4F0074E61B</string>
+											<string>A06D158E126ABC4F0074E61B</string>
+											<string>A06D158F126ABC4F0074E61B</string>
+											<string>A06D1590126ABC4F0074E61B</string>
+											<string>A06D1591126ABC4F0074E61B</string>
+											<string>A06D1592126ABC4F0074E61B</string>
+											<string>A06D1593126ABC4F0074E61B</string>
+											<string>A06D1594126ABC4F0074E61B</string>
+											<string>A06D1595126ABC4F0074E61B</string>
+											<string>A06D1596126ABC4F0074E61B</string>
+											<string>A06D1597126ABC4F0074E61B</string>
+											<string>A06D1598126ABC4F0074E61B</string>
+											<string>A06D1556126AAEFD0074E61B</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>

@@ -3,10 +3,8 @@
 //  riak_pb-objc
 //
 //  Created by Scott Gonyea on 9/1/10.
-//  Copyright (c) 2010 Inherently Lame Inc. All rights reserved.
 //
 #import <ObjFW/ObjFW.h>
-#import "ObjFW+Ruby.h"
 #import "MessageCodes.h"
 
 @interface RiakProtobuf : OFObject {
