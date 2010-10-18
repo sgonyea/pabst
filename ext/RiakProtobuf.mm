@@ -51,6 +51,7 @@ extern "C" {
 
   [socket flushWriteBuffer];
 }
+
 /*
 - (void)receiveResponses {
   size_t    msgLength;
@@ -149,7 +150,7 @@ extern "C" {
                 nil] retain];
 }
 
-- (OFDictionary *)getFromBucket:(OFString *)bucket atKey:(OFString *)key quorum:(OFNumber *)quorum {
+- (OFDictionary *)getKey:(OFString *)key fromBucket:(OFString *)bucket quorum:(OFNumber *)quorum {
   RpbGetReq   pbMsg;
   char       *message;
   OFNumber   *msgLength;

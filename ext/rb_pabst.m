@@ -41,11 +41,11 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   OFDataArray        *contents;
 
   // @TODO: Allow the quorum to be set
-  key         = [[riakpb getFromBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
-                                                            length:RSTRING_LEN(bucket_name)]
-                                 atKey:[OFString stringWithCString:RSTRING_PTR(key_name)
-                                                            length:RSTRING_LEN(key_name)]
-                                quorum:nil] autorelease];
+  key         = [[riakpb getKey:[OFString stringWithCString:RSTRING_PTR(key_name)
+                                                     length:RSTRING_LEN(key_name)]
+                     fromBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
+                                                     length:RSTRING_LEN(bucket_name)]
+                         quorum:nil] autorelease];
 
   vclock      = [key objectForKey:@"vclock"];
   contents    = [key objectForKey:@"content"];

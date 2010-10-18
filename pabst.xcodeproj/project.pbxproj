@@ -205,7 +205,7 @@
 			attributes = {
 				ORGANIZATIONNAME = "Inherently Lame Studios, Inc.";
 			};
-			buildConfigurationList = A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "riak_pb-objc" */;
+			buildConfigurationList = A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "pabst" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -322,7 +322,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "riak_pb-objc" */ = {
+		A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "pabst" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A016AA0112261F16004F6B52 /* Debug */,

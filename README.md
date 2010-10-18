@@ -9,7 +9,8 @@ How to Use
 ==========
 
 1. Install ObjFW
-      git:
+
+    git:
             git clone git://github.com/aitrus/objfw.git
             cd objfw
             ./autogen.sh

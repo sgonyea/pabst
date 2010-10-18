@@ -5,3 +5,6 @@ riakclient.pb.*
 .DS_Store
 build
 build/*
+riak_pb_objc.1
+riak_pb_objc_Prefix.pch
+
