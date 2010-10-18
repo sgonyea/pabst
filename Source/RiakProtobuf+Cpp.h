@@ -7,12 +7,7 @@
  */
 
 #import "RiakProtobuf.h"
-
-
-
-
-#import <ObjFW/OFDataArray.h>
-#import "ruby.h"
+#import "riakclient.pb.h"
 
 /**
  * This header file segments the C++ Protobuf lib-specific stuff, away from the
@@ -22,5 +17,11 @@
 
 - (OFMutableDictionary *)unpackContent:(RpbContent)pbContent;
 - (RpbContent)packContent:(OFDictionary *)pbContent;
+
+- (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent;
+- (RpbLink)packLinks:(OFDataArray *)pbLink;
+
+- (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent;
+- (RpbPair)packUserMeta:(OFDataArray *)pbLink;
 
 @end

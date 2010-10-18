@@ -130,13 +130,13 @@
 				A06D14D8126A97350074E61B /* rb_pabst.m */,
 				A06D14D9126A97350074E61B /* rb_riakpb.h */,
 				A06D14DA126A97350074E61B /* rb_riakpb.m */,
-				A06D14DE126A97490074E61B /* riakclient.pb.mm */,
-				A06D14DF126A97490074E61B /* riakclient.proto */,
 				A06D14E0126A97490074E61B /* RiakProtobuf.h */,
 				A06D14E1126A97490074E61B /* RiakProtobuf.mm */,
 				A06D1572126AB9B10074E61B /* RiakProtobuf+Cpp.h */,
 				A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */,
 				A016AA0712261F47004F6B52 /* riakclient.pb.h */,
+				A06D14DE126A97490074E61B /* riakclient.pb.mm */,
+				A06D14DF126A97490074E61B /* riakclient.proto */,
 				A06D14E2126A97490074E61B /* tst.rb */,
 			);
 			path = Source;

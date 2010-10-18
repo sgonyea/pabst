@@ -9,7 +9,6 @@ extern "C" {
 #   import "RiakProtobuf.h"
 }
 #import "RiakProtobuf+Cpp.h"
-#import "riakclient.pb.h"
 
 @implementation RiakProtobuf
 
@@ -52,7 +51,23 @@ extern "C" {
 
   [socket flushWriteBuffer];
 }
+/*
+- (void)receiveResponses {
+  size_t    msgLength;
+  uint8_t   msgCode;
+  char     *message;
 
+  msgLength = [[OFNumber numberWithUInt32:[socket readBigEndianInt32]]
+               numberByDecreasing];
+
+  code      = [OFNumber numberWithUInt8:[socket readInt8]];
+
+  if([msgLength uInt32Value] > 0) {
+    message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+    [socket readNBytes:[msgLength uInt32Value] intoBuffer:message];
+  }
+}
+*/
 - (void)dealloc {
   // Clean-up code here.
   [socket release];
@@ -70,6 +85,7 @@ extern "C" {
   OFNumber *code;
   char     *message;
 
+  // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
 
   return YES;
@@ -80,7 +96,7 @@ extern "C" {
 
   OFNumber *newClientId = [self clientIdGetResponse];
 
-  client_id = [newClientId copy];
+  clientId = [newClientId copy];
 
   return newClientId;
 }
@@ -91,6 +107,7 @@ extern "C" {
   OFNumber *code;
   char     *message;
 
+  // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
 
   pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
@@ -115,25 +132,21 @@ extern "C" {
 
 - (OFDictionary *)getServerInfoResponse {
   RpbGetServerInfoResp pbMsg;
-  OFDictionary  *response;
   OFNumber *msgLength;
   OFNumber *code;
   char     *message;
 
+  // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
 
   pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
 
-  response = [OFDictionary dictionaryWithKeysAndObjects:
+  return [[OFDictionary dictionaryWithKeysAndObjects:
                 @"node",    [OFString stringWithCString:pbMsg.node().c_str()
                                                  length:pbMsg.node().length()],
-
                 @"version", [OFString stringWithCString:pbMsg.server_version().c_str()
                                                  length:pbMsg.server_version().length()],
-
-                nil];
-
-  return [response retain];
+                nil] retain];
 }
 
 - (OFDictionary *)getFromBucket:(OFString *)bucket atKey:(OFString *)key quorum:(OFNumber *)quorum {
@@ -142,14 +155,15 @@ extern "C" {
   OFNumber   *msgLength;
   OFNumber   *msgCode;
 
-  pbMsg.set_bucket([bucket cString]);
-  pbMsg.set_key([key cString]);
+  pbMsg.set_bucket([bucket cString], [bucket length]);
+  pbMsg.set_key([key cString], [key length]);
+  pbMsg.set_r(3);
 
   if(quorum) {
-    pbMsg.set_r([quorum uInt32Value]);
+    pbMsg.set_r(3);
   }
 
-  msgCode   = [OFNumber numberWithUInt8:MC_LIST_KEYS_REQUEST];
+  msgCode   = [OFNumber numberWithUInt8:MC_GET_REQUEST];
   msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
   message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
 
@@ -160,45 +174,39 @@ extern "C" {
 }
 
 - (OFDictionary *)getKeyResponse {
-  RpbGetResp      pbMsg;
-  RpbContent      content;
-  OFDataArray    *contentArray;
-  OFDictionary   *response;
-  OFNumber       *msgLength;
-  OFNumber       *code;
-  char           *message;
-  int             i;
+  RpbGetResp    pbMsg;
+  OFMutableArray  *contentsArray;
+  OFNumber     *msgLength;
+  OFNumber     *code;
+  char         *message;
+  size_t        iter;
 
+  // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
 
   pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
 
-  [contentArray initWithItemSize:pbMsg.content_size()];
+  contentsArray = [OFMutableArray array];
 
-  for(i = 0; i < pbMsg.content_size(); i++) {
-    content = pbMsg.content(i);
-
-    [contentArray addItem:[self unpackContent:content]
-                  atIndex:i];
+  for(iter = 0; iter < pbMsg.content_size(); iter++) {
+    [contentsArray addObject:[self unpackContent:pbMsg.content(iter)]];
   }
 
-  response = [OFDictionary dictionaryWithKeysAndObjects:
-                @"content", contentArray,
-                @"vclock",  [OFString stringWithCString:pbMsg.vclock().c_str()
-                                                 length:pbMsg.vclock().length()],
-
-                nil];
-
-  return [response retain];
+  return [[OFDictionary dictionaryWithKeysAndObjects:
+           @"content", contentsArray,
+           @"vclock",  [OFString stringWithCString:pbMsg.vclock().c_str()
+                                          encoding:OF_STRING_ENCODING_ISO_8859_15
+                                            length:pbMsg.vclock().length()],
+           nil] retain];
 }
 
 // @TODO: Create an Ostream C++ class and Serialize directly onto the socket buffer.
 // @TODO: Delete pbMsg to clean up memory used.
 - (OFMutableArray *)listKeysInBucket:(OFString *)bucket {
-  RpbListKeysReq pbMsg;
-  char     *message;
-  OFNumber *msgLength;
-  OFNumber *msgCode;
+  RpbListKeysReq  pbMsg;
+  char           *message;
+  OFNumber       *msgLength;
+  OFNumber       *msgCode;
 
   pbMsg.set_bucket([bucket cString]);
 
@@ -223,16 +231,25 @@ extern "C" {
 
   keys = [[OFMutableArray array] retain];
 
-  receiveResponse(msgLength, code, message);
+  // @TODO: Proper response receiving
+  while(!isDone) {
+    msgLength = [[OFNumber numberWithUInt32:[socket readBigEndianInt32]]
+                 numberByDecreasing];
+    code      = [OFNumber numberWithUInt8:[socket readInt8]];
 
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+    if([msgLength uInt32Value] > 0) {
+      message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+      [socket readNBytes:[msgLength uInt32Value] intoBuffer:message];
 
-  if(pbMsg.has_done()) {
-    isDone = pbMsg.done();
-  }
+      pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
 
-  for(keyIndex = 0; keyIndex < pbMsg.keys_size(); keyIndex++) {
-    [keys addObject:[OFString stringWithCString:pbMsg.keys(keyIndex).c_str()]];
+      for(keyIndex = 0; keyIndex < pbMsg.keys_size(); keyIndex++) {
+        [keys addObject:[[OFString stringWithCString:pbMsg.keys(keyIndex).c_str()
+                                              length:pbMsg.keys(keyIndex).length()] retain]];
+      }
+
+      isDone = pbMsg.done();
+    }
   }
 
   return keys;

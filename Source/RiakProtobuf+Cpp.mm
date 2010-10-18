@@ -55,53 +55,71 @@
   }
   
   if(pbContent.links_size() > 0) {
-    OFDataArray *linksArray = [OFDataArray dataArrayWithItemSize:pbContent.links_size()];
-    
-    for(iter = 0; iter < pbContent.links_size(); iter++) {
-      RpbLink link = pbContent.links(iter);
-      [linksArray addItem:[OFDictionary dictionaryWithKeysAndObjects:
-                           @"bucket",  [OFString stringWithCString:link.bucket().c_str()
-                                                            length:link.bucket().length()],
-                           
-                           @"key",     [OFString stringWithCString:link.key().c_str()
-                                                            length:link.key().length()],
-                           
-                           @"tag",     [OFString stringWithCString:link.tag().c_str()
-                                                            length:link.tag().length()],
-                           
-                           nil]
-                  atIndex:iter];
-    }
-    
-    [content setObject:linksArray
+    [content setObject:[self unpackLinksFromContent:pbContent]
                 forKey:@"links"];
   }
-  
-  
+
   if(pbContent.usermeta_size() > 0) {
-    OFDataArray *userMetaArray = [OFDataArray dataArrayWithItemSize:pbContent.usermeta_size()];
     
-    for(iter = 0; iter < pbContent.usermeta_size(); iter++) {
-      RpbPair userMeta = pbContent.usermeta(iter);
-      [userMetaArray addItem:[OFDictionary dictionaryWithKeysAndObjects:
-                              @"key",     [OFString stringWithCString:userMeta.key().c_str()
-                                                               length:userMeta.key().length()],
-                              @"value",   [OFString stringWithCString:userMeta.value().c_str()
-                                                               length:userMeta.value().length()],
-                              nil]
-                     atIndex:iter];
-    }
-    
-    [content setObject:userMetaArray
+    [content setObject:[self unpackUserMetaFromContent:pbContent]
                 forKey:@"user_meta"];
   }
-  
+
   return content;
 }
 
-
+// @TODO: Do
 - (RpbContent)packContent:(OFDictionary *)pbContent {
-  return nil;
+  RpbContent rpbc;
+  return rpbc;
+}
+
+- (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
+  OFDataArray  *linksArray = [OFDataArray dataArrayWithItemSize:pbContent.links_size()];
+  size_t        iter;
+
+  for(iter = 0; iter < pbContent.links_size(); iter++) {
+    RpbLink link = pbContent.links(iter);
+
+    [linksArray addItem:[OFDictionary dictionaryWithKeysAndObjects:
+                         @"bucket",  [OFString stringWithCString:link.bucket().c_str()
+                                                          length:link.bucket().length()],
+                         @"key",     [OFString stringWithCString:link.key().c_str()
+                                                          length:link.key().length()],
+                         @"tag",     [OFString stringWithCString:link.tag().c_str()
+                                                          length:link.tag().length()],
+                         nil]
+                atIndex:iter];
+  }
+}
+
+// @TODO: Do
+- (RpbLink)packLinks:(OFDataArray *)pbLink {
+  RpbLink rpbc;
+  return rpbc;
+}
+
+- (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent {
+  OFDataArray  *userMetaArray = [OFDataArray dataArrayWithItemSize:pbContent.usermeta_size()];
+  size_t        iter;
+  
+  for(iter = 0; iter < pbContent.usermeta_size(); iter++) {
+    RpbPair userMeta = pbContent.usermeta(iter);
+    [userMetaArray addItem:[OFDictionary dictionaryWithKeysAndObjects:
+                            @"key",     [OFString stringWithCString:userMeta.key().c_str()
+                                                             length:userMeta.key().length()],
+                            @"value",   [OFString stringWithCString:userMeta.value().c_str()
+                                                             length:userMeta.value().length()],
+                            nil]
+                   atIndex:iter];
+  }
+  
+}
+
+// @TODO: Do
+- (RpbPair)packUserMeta:(OFDataArray *)pbLink {
+  RpbPair rpbc;
+  return rpbc;
 }
 
 @end
