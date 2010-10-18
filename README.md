@@ -5,8 +5,8 @@ Pabst is a cross-platform Ruby Extension, written in both Objective-C and Object
 
 [ObjFW][objfw] ([mirror][objfw-mirror]) is at the heart of this extension, and is written by Jonathan Schleifer.  It's an excellent, cross-platform Objective-C library and is something I believe could benefit the Ruby community.
 
-How to Install
-==============
+How to Use
+==========
 
 1. Install ObjFW
       git:
@@ -25,7 +25,7 @@ How to Install
             [sudo] make install
 2. Install [Google Protocol Buffers][protobuf] ([Download List][protobuf-dl])
     This should be available via whichever package manager you use. I use Mac Homebrew, and it's there.
-3. Build this extension:
+3. Get the extension:
     * Clone this repo:
 
             git clone git://github.com/aitrus/pabst.git
