@@ -1,7 +1,7 @@
 require 'benchmark'
 require './Riakpb'
 require 'riakpb'
-require 'ripple'
+require 'riak'
 
 Benchmark.bmbm do |x|
   x.report("run: ObjC") {
