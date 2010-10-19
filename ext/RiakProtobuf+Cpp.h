@@ -16,12 +16,12 @@
 @interface RiakProtobuf (Cpp)
 
 - (OFMutableDictionary *)unpackContent:(RpbContent)pbContent;
-- (RpbContent)packContent:(OFDictionary *)pbContent;
+- (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content;
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent;
-- (RpbLink)packLinks:(OFDataArray *)pbLink;
+- (void)packLinks:(OFDataArray *)pbLink fromData:(OFDataArray *)links;
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent;
-- (RpbPair)packUserMeta:(OFDataArray *)pbLink;
+- (void)packUserMeta:(OFDataArray *)pbMeta fromData:(OFDataArray *)metas;
 
 @end

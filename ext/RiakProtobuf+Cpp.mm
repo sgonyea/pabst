@@ -69,14 +69,14 @@
 }
 
 // @TODO: Do
-- (RpbContent)packContent:(OFDictionary *)pbContent {
+- (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content {
   RpbContent rpbc;
   return rpbc;
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
   OFDataArray  *linksArray = [OFDataArray dataArrayWithItemSize:pbContent.links_size()];
-  size_t        iter;
+  int           iter;
 
   for(iter = 0; iter < pbContent.links_size(); iter++) {
     RpbLink link = pbContent.links(iter);
@@ -94,14 +94,14 @@
 }
 
 // @TODO: Do
-- (RpbLink)packLinks:(OFDataArray *)pbLink {
+- (void)packLinks:(OFDataArray *)pbLink fromData:(OFDataArray *)links {
   RpbLink rpbc;
   return rpbc;
 }
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent {
   OFDataArray  *userMetaArray = [OFDataArray dataArrayWithItemSize:pbContent.usermeta_size()];
-  size_t        iter;
+  int           iter;
   
   for(iter = 0; iter < pbContent.usermeta_size(); iter++) {
     RpbPair userMeta = pbContent.usermeta(iter);
@@ -117,7 +117,7 @@
 }
 
 // @TODO: Do
-- (RpbPair)packUserMeta:(OFDataArray *)pbLink {
+- (void)packUserMeta:(OFDataArray *)pbMeta fromData:(OFDataArray *)metas {
   RpbPair rpbc;
   return rpbc;
 }

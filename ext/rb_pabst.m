@@ -32,10 +32,11 @@ VALUE rb_get_server_info_request(VALUE self) {
 }
 
 VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
-  VALUE               rb_key  = rb_hash_new();
-  VALUE               rb_vclock, rb_contents;
+  OFAutoreleasePool  *pool        = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb      = Get_RiakProtobuf(self);
+  VALUE               rb_key      = rb_hash_new(),
+                      rb_vclock   = Qnil,
+                      rb_contents = Qnil;
   OFDictionary       *key;
   OFString           *vclock;
   OFDataArray        *contents;

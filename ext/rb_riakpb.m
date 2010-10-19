@@ -6,9 +6,8 @@
 //
 #import "rb_riakpb.h"
 
-VALUE               rb_mRiakpb  = Qnil;
-VALUE               rb_cPabst   = Qnil;
-OFAutoreleasePool  *pool        = nil;
+VALUE   rb_mRiakpb  = Qnil;
+VALUE   rb_cPabst   = Qnil;
 
 void Init_Riakpb() {
   rb_mRiakpb  = rb_define_module("Riakpb");
@@ -26,8 +25,7 @@ void Init_Riakpb() {
 
 VALUE pabst_allocate(VALUE klass) {
   RiakProtobuf *riakpb;
-  
-  pool    = [OFAutoreleasePool alloc];
+
   riakpb  = [RiakProtobuf alloc];
 
   return Data_Wrap_Struct(klass, pabst_mark, pabst_free, riakpb);
@@ -35,8 +33,6 @@ VALUE pabst_allocate(VALUE klass) {
 
 VALUE pabst_initialize(VALUE self) {
   RiakProtobuf *riakpb = Get_RiakProtobuf(self);
-
-  [pool init];
 
   [riakpb initWithService:@"8087" onNode:@"127.0.0.1"];
 
@@ -49,7 +45,6 @@ void pabst_mark(RiakProtobuf *self) {
 
 void pabst_free(RiakProtobuf *self) {
   [self release];
-  [pool release];
 }
 
 

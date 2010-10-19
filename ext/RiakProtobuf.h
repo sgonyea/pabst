@@ -89,7 +89,7 @@
  *  Response
  *    riak sends Message Code, Only, as confirmation
  */
-- (BOOL)setClientIdResponse; // Message Code Only
+- (BOOL)setClientIdResponse;
 
 
 /* Get Server Information */
@@ -123,17 +123,43 @@
  *  Request
  *    Send the name of the bucket (1), the key (2), the key's content (3), the quorum (4), and the commits-before-ack (5)
  */
-- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket content:(OFDictionary *)content withBody:(BOOL)body quorum:(OFNumber *)quorum commit:(OFNumber *)commit;
+- (OFDictionary *)putKey:(OFString *)key
+                inBucket:(OFString *)bucket
+                  vClock:(OFString *)vClock
+                 content:(OFDictionary *)content
+                  quorum:(OFNumber *)quorum
+                  commit:(OFNumber *)commit
+              returnBody:(BOOL)returnBody;
 /**
  *  Response
  *    riak sends two values: the bucket+key's vclock (1) and content(s) on the key (2)
  */
 - (OFDictionary *)putResponse;
 
-- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket replicas:(OFNumber *)replicas;
-- (BOOL)deleteKeyResponse; // Message Code Only
 
-- (OFArray *)listBucketsRequest; // Message Code Only
+/* Delete (Key) Request */
+/**
+ *  Request
+ *    Send the name of the bucket (1), the key name (2), and the num replicas that should confirm deletion (3)
+ */
+- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket replicas:(OFNumber *)replicas;
+/**
+ *  Response
+ *    riak sends Message Code, Only, as confirmation
+ */
+- (BOOL)deleteKeyResponse;
+
+
+/* List Buckets Request */
+/**
+ *  Request
+ *    Send Message Code, Only
+ */
+- (OFArray *)listBucketsRequest;
+/**
+ *  Request
+ *    Send Message Code, Only
+ */
 - (OFArray *)listBucketsResponse;
 
 - (OFMutableArray *)listKeysInBucket:(OFString *)bucket;

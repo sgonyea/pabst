@@ -51,7 +51,6 @@ extern "C" {
 
   [socket flushWriteBuffer];
 }
-
 /*
 - (void)receiveResponses {
   size_t    msgLength;
@@ -119,9 +118,11 @@ extern "C" {
 // @TODO: Rest of Set Client ID
 - (BOOL)setClientId {
   RpbSetClientIdReq protobuf;
+  
   if (!clientId) {
     [self getClientId];
   }
+  protobuf.set_client_id((void *)[clientId uInt32Value], sizeof(uint32_t));
   // @TODO: Set the client ID
   return YES;
 }
@@ -158,10 +159,9 @@ extern "C" {
 
   pbMsg.set_bucket([bucket cString], [bucket length]);
   pbMsg.set_key([key cString], [key length]);
-  pbMsg.set_r(3);
 
   if(quorum) {
-    pbMsg.set_r(3);
+    pbMsg.set_r([quorum uInt32Value]);
   }
 
   msgCode   = [OFNumber numberWithUInt8:MC_GET_REQUEST];
@@ -180,7 +180,7 @@ extern "C" {
   OFNumber     *msgLength;
   OFNumber     *code;
   char         *message;
-  size_t        iter;
+  int           iter;
 
   // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
@@ -199,6 +199,32 @@ extern "C" {
                                           encoding:OF_STRING_ENCODING_ISO_8859_15
                                             length:pbMsg.vclock().length()],
            nil] retain];
+}
+
+- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(OFNumber *)quorum commit:(OFNumber *)commit returnBody:(BOOL)returnBody {
+  RpbPutReq   pbMsg;
+  RpbContent  pbContent = (RpbContent)pbMsg.content();
+  char       *message;
+  OFNumber   *msgLength;
+  OFNumber   *msgCode;
+
+  pbMsg.set_bucket([bucket cString], [bucket length]);
+  pbMsg.set_key([key cString], [key length]);
+  pbMsg.set_vclock([vClock cString], [vClock length]);
+  pbMsg.set_w([quorum uInt32Value]);
+  pbMsg.set_dw([commit uInt32Value]);
+  pbMsg.set_return_body(returnBody);
+
+  [self packContent:pbContent fromDictionary:content];
+
+  msgCode   = [OFNumber numberWithUInt8:MC_PUT_REQUEST];
+  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
+  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+
+  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
+
+  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  return [self getKeyResponse];
 }
 
 // @TODO: Create an Ostream C++ class and Serialize directly onto the socket buffer.
