@@ -31,7 +31,7 @@
                                             length:pbContent.charset().length()]
                 forKey:@"charset"];
   }
-  
+
   if(pbContent.has_content_encoding()) {
     [content setObject:[OFString stringWithCString:pbContent.content_encoding().c_str()
                                             length:pbContent.content_encoding().length()]
@@ -117,12 +117,26 @@
                          nil]
                 atIndex:iter];
   }
+  return linksArray;
 }
 
 // @TODO: Do
 - (void)packLinks:(OFDataArray *)links InContent:(RpbContent)content {
-  RpbLink rpbc;
-  return rpbc;
+  size_t iter;
+
+  for(iter = 0;  iter < [links count]; iter++) {
+    RpbLink      *_pblink = content.add_links();
+    OFDictionary *_rbLink = (OFDictionary *)[links itemAtIndex:iter];
+
+    if([_rbLink objectForKey:@"bucket"])
+      _pblink->set_bucket([[_rbLink objectForKey:@"bucket"] cString], [[_rbLink objectForKey:@"bucket"] length]);
+
+    if([_rbLink objectForKey:@"key"])
+      _pblink->set_key([[_rbLink objectForKey:@"key"] cString], [[_rbLink objectForKey:@"key"] length]);
+
+    if([_rbLink objectForKey:@"tag"])
+      _pblink->set_tag([[_rbLink objectForKey:@"tag"] cString], [[_rbLink objectForKey:@"tag"] length]);
+  }
 }
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent {
@@ -139,13 +153,24 @@
                             nil]
                    atIndex:iter];
   }
-  
+  return userMetaArray;
 }
 
 // @TODO: Do
-- (void)packUserMeta:(OFDataArray *)uMeta InContent:(RpbContent)content {
-  RpbPair rpbc;
-  return rpbc;
+- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent)content {
+  size_t iter;
+
+  for(iter = 0;  iter < [userMeta count]; iter++) {
+    RpbPair      *_pbMeta = content.add_usermeta();
+    OFDictionary *_rbMeta = (OFDictionary *)[userMeta itemAtIndex:iter];
+    
+    if([_rbMeta objectForKey:@"key"]) {
+      _pbMeta->set_key([[_rbMeta objectForKey:@"key"] cString], [[_rbMeta objectForKey:@"key"] length]);
+    }
+    if([_rbMeta objectForKey:@"value"]) {
+      _pbMeta->set_value([[_rbMeta objectForKey:@"value"] cString], [[_rbMeta objectForKey:@"value"] length]);
+    }
+  }
 }
 
 @end

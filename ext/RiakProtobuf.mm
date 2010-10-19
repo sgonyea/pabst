@@ -201,7 +201,7 @@ extern "C" {
            nil] retain];
 }
 
-- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(OFNumber *)quorum commit:(OFNumber *)commit returnBody:(BOOL)returnBody {
+- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFMutableDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
   RpbPutReq   pbMsg;
   RpbContent  pbContent = (RpbContent)pbMsg.content();
   char       *message;
@@ -211,8 +211,8 @@ extern "C" {
   pbMsg.set_bucket([bucket cString], [bucket length]);
   pbMsg.set_key([key cString], [key length]);
   pbMsg.set_vclock([vClock cString], [vClock length]);
-  pbMsg.set_w([quorum uInt32Value]);
-  pbMsg.set_dw([commit uInt32Value]);
+  pbMsg.set_w(quorum);
+  pbMsg.set_dw(commit);
   pbMsg.set_return_body(returnBody);
 
   [self packContent:pbContent fromDictionary:content];
@@ -224,7 +224,59 @@ extern "C" {
   pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
 
   [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-  return [self getKeyResponse];
+
+  if(returnBody)
+    return [self putResponseAndGetBody];
+  else
+    return [self putResponse];
+}
+
+- (OFDictionary *)putResponse {
+  RpbPutResp        pbMsg;
+  OFMutableArray   *contentsArray;
+  OFNumber         *msgLength;
+  OFNumber         *code;
+  char             *message;
+  int               iter;
+  
+  // @TODO: Proper response receiving
+  // @TODO2: ie, raise exception on error response
+  receiveResponse(msgLength, code, message);
+
+  if([code int8Value] == (uint8_t)MC_PUT_RESPONSE)
+    return [[OFDictionary dictionaryWithKeysAndObjects:
+             @"successful", YES,  nil] retain];
+  else
+    return [[OFDictionary dictionaryWithKeysAndObjects:
+             @"successful", NO,   nil] retain];
+}
+
+- (OFDictionary *)putResponseAndGetBody {
+  RpbPutResp        pbMsg;
+  OFMutableArray   *contentsArray;
+  OFNumber         *msgLength;
+  OFNumber         *code;
+  char             *message;
+  int               iter;
+
+  // @TODO: Proper response receiving
+  receiveResponse(msgLength, code, message);
+
+  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+
+  contentsArray = [OFMutableArray array];
+
+  for(iter = 0; iter < pbMsg.content_size(); iter++) {
+    [contentsArray addObject:[self unpackContent:pbMsg.content(iter)]];
+  }
+
+  return [[OFDictionary dictionaryWithKeysAndObjects:
+           @"content",    contentsArray,
+           @"vclock",     [OFString stringWithCString:pbMsg.vclock().c_str()
+                                             encoding:OF_STRING_ENCODING_ISO_8859_15
+                                               length:pbMsg.vclock().length()],
+           @"successful", YES,
+           nil] retain];
 }
 
 // @TODO: Create an Ostream C++ class and Serialize directly onto the socket buffer.

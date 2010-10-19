@@ -20,12 +20,14 @@
 /**
  *  Initialize the RiakProtobuf with port/hostname for a riak node
  */
-- (id)initWithService:(OFString *)port onNode:(OFString *)node;
+- (id)initWithService:(OFString *)port
+               onNode:(OFString *)node;
 
 /**
  *  Connect to a riak node's port/hostname
  */
-- (void)connectToService:(OFString *)port onNode:(OFString *)node;
+- (void)connectToService:(OFString *)port
+                  onNode:(OFString *)node;
 
 /**
  *  Send a request who's only content is a Message Code
@@ -35,7 +37,9 @@
 /**
  *  Send a request made up of a Message Code and a serialized Protobuf
  */
-- (void)sendMessageWithLength:(OFNumber *)length message:(char *)message messageCode:(OFNumber *)code;
+- (void)sendMessageWithLength:(OFNumber *)length
+                      message:(char *)message
+                  messageCode:(OFNumber *)code;
 
 /**
  *  De-allocate
@@ -110,7 +114,9 @@
  *  Request
  *    Send the name of the bucket (1), the key (2), and the quorum (3)
  */
-- (OFDictionary *)getKey:(OFString *)key fromBucket:(OFString *)bucket quorum:(OFNumber *)quorum;
+- (OFDictionary *)getKey:(OFString *)key
+              fromBucket:(OFString *)bucket
+                  quorum:(OFNumber *)quorum;
 /**
  *  Response
  *    riak sends two values: the bucket+key's vclock (1) and content(s) on the key (2)
@@ -126,15 +132,20 @@
 - (OFDictionary *)putKey:(OFString *)key
                 inBucket:(OFString *)bucket
                   vClock:(OFString *)vClock
-                 content:(OFDictionary *)content
-                  quorum:(OFNumber *)quorum
-                  commit:(OFNumber *)commit
+                 content:(OFMutableDictionary *)content
+                  quorum:(uint32_t)quorum
+                  commit:(uint32_t)commit
               returnBody:(BOOL)returnBody;
+/**
+ *  Response
+ *    riak sends just a message code, confirming that it done got putted
+ */
+- (OFDictionary *)putResponse;
 /**
  *  Response
  *    riak sends two values: the bucket+key's vclock (1) and content(s) on the key (2)
  */
-- (OFDictionary *)putResponse;
+- (OFDictionary *)putResponseAndGetBody;
 
 
 /* Delete (Key) Request */
@@ -142,7 +153,9 @@
  *  Request
  *    Send the name of the bucket (1), the key name (2), and the num replicas that should confirm deletion (3)
  */
-- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket replicas:(OFNumber *)replicas;
+- (BOOL)deleteKey:(OFString *)key
+       fromBucket:(OFString *)bucket
+         replicas:(OFNumber *)replicas;
 /**
  *  Response
  *    riak sends Message Code, Only, as confirmation
@@ -168,10 +181,13 @@
 - (OFDictionary *)getBucket:(OFString *)bucket;
 - (OFDictionary *)getBucketResponse;
 
-- (BOOL)setPropInBucket:(OFString *)bucket nVal:(OFNumber *)nVal isMult:(BOOL)isMult;
+- (BOOL)setPropInBucket:(OFString *)bucket
+                   nVal:(OFNumber *)nVal
+                 isMult:(BOOL)isMult;
 - (BOOL)setBucketResponse; // Message Code Only
 
-- (OFDictionary *)mapReduceRequest:(char *)request contentType:(OFString *)contentType;
+- (OFDictionary *)mapReduceRequest:(char *)request
+                       contentType:(OFString *)contentType;
 - (OFDictionary *)mapReduceResponse;
 
 @end

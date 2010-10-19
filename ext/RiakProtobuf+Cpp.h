@@ -22,6 +22,6 @@
 - (void)packLinks:(OFDataArray *)links InContent:(RpbContent)content;
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent;
-- (void)packUserMeta:(OFDataArray *)uMeta InContent:(RpbContent)content;
+- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent)content;
 
 @end

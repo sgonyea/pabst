@@ -62,6 +62,47 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   return rb_key;
 }
 
+VALUE rb_put_key_request(VALUE self,      VALUE bucket_name,  VALUE key_name,   VALUE content, 
+                         VALUE rb_vclock, VALUE rb_quorum,    VALUE rb_commit,  VALUE return_body) {
+
+  Check_Type(bucket_name, T_STRING);
+  Check_Type(key_name,    T_STRING);
+  Check_Type(content,     T_HASH);
+
+  if(rb_vclock != Qnil)
+    Check_Type(rb_vclock, T_STRING);
+  if(rb_quorum != Qnil)
+    Check_Type(rb_quorum, T_FIXNUM);
+  if(rb_commit != Qnil)
+    Check_Type(rb_commit, T_FIXNUM);
+
+  OFAutoreleasePool    *pool        = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf         *riakpb      = Get_RiakProtobuf(self);
+  VALUE                 rb_key      = rb_hash_new(),
+                        rb_vclock   = Qnil,
+                        rb_contents = Qnil;
+  OFDictionary         *key         = nil;
+  OFMutableDictionary  *content     = [[OFMutableDictionary alloc] init];
+  int                   quorum      = NUM2INT(rb_quorum),
+                        commit      = NUM2INT(rb_commit);
+  BOOL                  returnBody  = YES;
+
+  if(Qfalse == return_body)
+    returnBody = NO;
+
+  // @TODO: Check the Ruby encoding and set it accordingly
+  key = [[riakpb putKey:[OFString stringWithCString:RSTRING_PTR(key_name)
+                                             length:RSTRING_LEN(key_name)]
+               inBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
+                                             length:RSTRING_LEN(bucket_name)]
+                 vClock:[OFString stringWithCString:RSTRING_PTR(key_name)
+                                             length:RSTRING_LEN(key_name)]
+                content:
+                 quorum:quorum
+                 commit:commit
+             returnBody:returnBody] autorelease];
+}
+
 VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
   OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
