@@ -19,9 +19,9 @@
 - (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content;
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent;
-- (void)packLinks:(OFDataArray *)pbLink fromData:(OFDataArray *)links;
+- (void)packLinks:(OFDataArray *)links InContent:(RpbContent)content;
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent;
-- (void)packUserMeta:(OFDataArray *)pbMeta fromData:(OFDataArray *)metas;
+- (void)packUserMeta:(OFDataArray *)uMeta InContent:(RpbContent)content;
 
 @end

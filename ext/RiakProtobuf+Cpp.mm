@@ -40,6 +40,7 @@
   
   if(pbContent.has_vtag()) {
     [content setObject:[OFString stringWithCString:pbContent.vtag().c_str()
+		                        							encoding:OF_STRING_ENCODING_ISO_8859_15
                                             length:pbContent.vtag().length()]
                 forKey:@"vtag"];
   }
@@ -70,8 +71,33 @@
 
 // @TODO: Do
 - (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content {
-  RpbContent rpbc;
-  return rpbc;
+	if([content objectForKey:@"value"]) {
+		pbContent.set_value([[content objectForKey:@"value"] cString], [[content objectForKey:@"value"] length]);
+  }
+	if([content objectForKey:@"content_type"]) {
+		pbContent.set_content_type([[content objectForKey:@"content_type"] cString], [[content objectForKey:@"content_type"] length]);
+  }
+  if([content objectForKey:@"charset"]) {
+		pbContent.set_charset([[content objectForKey:@"charset"] cString], [[content objectForKey:@"charset"] length]);
+  }
+  if([content objectForKey:@"content_encoding"]) {
+		pbContent.set_content_encoding([[content objectForKey:@"content_encoding"] cString], [[content objectForKey:@"content_encoding"] length]);
+  }
+  if([content objectForKey:@"vtag"]) {
+		pbContent.set_vtag([[content objectForKey:@"vtag"] cString], [[content objectForKey:@"vtag"] length]);
+  }
+  if([content objectForKey:@"last_mod"]) {
+		pbContent.set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
+  }
+  if([content objectForKey:@"last_mod_usecs"]) {
+		pbContent.set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
+  }
+  if([content objectForKey:@"links"]) {
+    [self packLinks:[content objectForKey:@"links"] InContent:pbContent];
+  }
+  if([content objectForKey:@"user_meta"]) {
+		[self packUserMeta:[content objectForKey:@"user_meta"] InContent:pbContent];
+  }
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
@@ -94,7 +120,7 @@
 }
 
 // @TODO: Do
-- (void)packLinks:(OFDataArray *)pbLink fromData:(OFDataArray *)links {
+- (void)packLinks:(OFDataArray *)links InContent:(RpbContent)content {
   RpbLink rpbc;
   return rpbc;
 }
@@ -117,7 +143,7 @@
 }
 
 // @TODO: Do
-- (void)packUserMeta:(OFDataArray *)pbMeta fromData:(OFDataArray *)metas {
+- (void)packUserMeta:(OFDataArray *)uMeta InContent:(RpbContent)content {
   RpbPair rpbc;
   return rpbc;
 }
