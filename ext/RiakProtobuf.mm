@@ -203,28 +203,28 @@ extern "C" {
 
 - (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFMutableDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
   RpbPutReq   pbMsg;
-  RpbContent  pbContent = (RpbContent)pbMsg.content();
+  RpbContent *pbContent = pbMsg.mutable_content();
   char       *message;
   OFNumber   *msgLength;
   OFNumber   *msgCode;
-
+puts("tst10-1\n");
   pbMsg.set_bucket([bucket cString], [bucket length]);
   pbMsg.set_key([key cString], [key length]);
   pbMsg.set_vclock([vClock cString], [vClock length]);
   pbMsg.set_w(quorum);
   pbMsg.set_dw(commit);
   pbMsg.set_return_body(returnBody);
-
+puts("tst10-2\n");
   [self packContent:pbContent fromDictionary:content];
-
+puts("tst10-3\n");
   msgCode   = [OFNumber numberWithUInt8:MC_PUT_REQUEST];
   msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
   message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
-
+puts("tst10-4\n");
   pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-
+puts("tst10-5\n");
   [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-
+puts("tst10-6\n");
   if(returnBody)
     return [self putResponseAndGetBody];
   else

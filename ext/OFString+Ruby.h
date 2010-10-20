@@ -11,5 +11,6 @@
  * return The object in a Ruby-friendly form
  */
 - (VALUE)toRuby;
+- (VALUE)toRubySymbol;
 
 @end

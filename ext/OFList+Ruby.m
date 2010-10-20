@@ -1,5 +1,6 @@
 
 #import "OFList+Ruby.h"
+#import "ObjFW+Ruby.h"
 
 @implementation OFList (Ruby)
 

@@ -1,5 +1,6 @@
 
 #import "OFString+Ruby.h"
+#import "ObjFW+Ruby.h"
 
 @implementation OFString (Ruby)
 
@@ -12,4 +13,9 @@
   */
   return rb_str_new(string, length);
 }
+
+- (VALUE)toRubySymbol {
+  return ID2SYM(rb_intern([self cString]));
+}
+
 @end

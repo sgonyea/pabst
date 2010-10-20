@@ -1,5 +1,6 @@
 
 #import "OFNumber+Ruby.h"
+#import "ObjFW+Ruby.h"
 
 @implementation OFNumber (Ruby)
 

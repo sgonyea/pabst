@@ -1,5 +1,6 @@
 
 #import "OFArray+Ruby.h"
+#import "ObjFW+Ruby.h"
 
 @implementation OFArray (Ruby)
 

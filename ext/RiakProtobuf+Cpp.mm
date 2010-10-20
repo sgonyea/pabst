@@ -72,7 +72,7 @@
 // @TODO: Do
 - (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content {
 	if([content objectForKey:@"value"]) {
-		pbContent.set_value([[content objectForKey:@"value"] cString], [[content objectForKey:@"value"] length]);
+		pbContent.set_value([[content objectForKey:@"value"] cString]);
   }
 
 	if([content objectForKey:@"content_type"]) {
