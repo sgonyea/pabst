@@ -207,7 +207,7 @@ extern "C" {
   char       *message;
   OFNumber   *msgLength;
   OFNumber   *msgCode;
-puts("tst10-01\n");
+
   pbMsg.set_bucket([bucket cString]);
   pbMsg.set_key([key cString]);
   if(vClock)
@@ -215,17 +215,17 @@ puts("tst10-01\n");
   pbMsg.set_w(quorum);
   pbMsg.set_dw(commit);
   pbMsg.set_return_body(returnBody);
-puts("tst10-02\n");
+
   [self packContent:pbContent fromDictionary:content];
-puts("tst10-03\n");
+
   msgCode   = [OFNumber numberWithUInt8:MC_PUT_REQUEST];
   msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
   message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
-puts("tst10-04\n");
+
   pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-puts("tst10-05\n");
+
   [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-puts("tst10-06\n");
+
   if(returnBody)
     return [self putResponseAndGetBody];
   else
@@ -253,30 +253,27 @@ puts("tst10-06\n");
 }
 
 - (OFDictionary *)putResponseAndGetBody {
-  RpbPutResp        pbMsg;
-  OFMutableArray   *contentsArray;
-  OFNumber         *msgLength;
-  OFNumber         *code;
-  char             *message;
-  int               iter;
-puts("tst10-07\n");
+  RpbPutResp      pbMsg;
+  OFDataArray 	 *contentsArray;
+  OFNumber       *msgLength;
+  OFNumber       *code;
+  char           *message;
+  int             iter;
+
   // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
-puts("tst10-08\n");
   pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
-puts("tst10-09\n");
-  contentsArray = [[OFMutableArray array] retain];
-puts("tst10-10\n");
+  contentsArray = [[OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)] retain];
+
   for(iter = 0; iter < pbMsg.content_size(); iter++) {
-    [[contentsArray addObject:[self unpackContent:pbMsg.content(iter)]] retain];
+    [contentsArray addItem:[self unpackContent:pbMsg.content(iter)]];
   }
-puts("tst10-11\n");
+
   return [[OFDictionary dictionaryWithKeysAndObjects:
            @"content",    contentsArray,
            @"vclock",     [OFString stringWithCString:pbMsg.vclock().c_str()
                                              encoding:OF_STRING_ENCODING_ISO_8859_15
                                                length:pbMsg.vclock().length()],
-           @"successful", YES,
            nil] retain];
 }
 

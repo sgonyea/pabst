@@ -75,30 +75,36 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   Check_Type(key_name,    T_STRING);
   Check_Type(rb_content,  T_HASH);
 
-  
-  puts("tst01\n");
-  if(vclock != Qnil)
-    Check_Type(vclock, T_STRING);
   if(rb_quorum != Qnil)
     Check_Type(rb_quorum, T_FIXNUM);
   if(rb_commit != Qnil)
     Check_Type(rb_commit, T_FIXNUM);
-  puts("tst02\n");
+
   OFAutoreleasePool    *pool        = [[OFAutoreleasePool alloc] init];
   RiakProtobuf         *riakpb      = Get_RiakProtobuf(self);
   VALUE                 rb_key      = rb_hash_new(),
                         rb_vclock   = Qnil,
                         rb_tmp	    = Qnil,
                         rb_return   = Qnil;
-  OFDictionary         *key         = nil;
+  OFDictionary         *key;
+  OFString						 *vClock;
   OFMutableDictionary  *content     = [[OFMutableDictionary alloc] init];
   int                   quorum      = NUM2INT(rb_quorum),
                         commit      = NUM2INT(rb_commit);
   BOOL                  returnBody  = YES;
-  puts("tst03\n");
+
   if(Qfalse == return_body)
     returnBody = NO;
-puts("tst04");
+  if(vclock != Qnil) {
+    Check_Type(vclock, T_STRING);
+    
+    vClock = [OFString stringWithCString:RSTRING_PTR(rb_vclock)
+                                encoding:OF_STRING_ENCODING_ISO_8859_15
+                                  length:RSTRING_LEN(rb_vclock)];
+  } else {
+    vClock = nil;
+  }
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("value")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
@@ -106,7 +112,7 @@ puts("tst04");
                                             length:RSTRING_LEN(rb_tmp)]
                 forKey:@"value"];
   }
-puts("tst05\n");
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_type")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
@@ -114,7 +120,7 @@ puts("tst05\n");
                                             length:RSTRING_LEN(rb_tmp)]
                 forKey:@"content_type"];
   }
-puts("tst06\n");
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("charset")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
@@ -122,7 +128,7 @@ puts("tst06\n");
                                             length:RSTRING_LEN(rb_tmp)]
                 forKey:@"charset"];
   }
-puts("tst07\n");
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_encoding")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
@@ -130,7 +136,7 @@ puts("tst07\n");
                                             length:RSTRING_LEN(rb_tmp)]
                 forKey:@"content_encoding"];
   }
-puts("tst08\n");
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("links")));
 
   if(rb_tmp != Qnil) {
@@ -187,7 +193,7 @@ puts("tst08\n");
 
     [content setObject:link forKey:@"links"];
   }
-puts("tst09\n");
+
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("user_meta")));
 
   if(rb_tmp != Qnil) {
@@ -231,26 +237,23 @@ puts("tst09\n");
     }
     [content setObject:uMeta forKey:@"user_meta"];
   }
-puts("tst10\n");
+
   // @TODO: Check the Ruby encoding and set it accordingly
   key = [riakpb  putKey:[OFString stringWithCString:RSTRING_PTR(key_name)
                                              length:RSTRING_LEN(key_name)]
                inBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
                                              length:RSTRING_LEN(bucket_name)]
-                 vClock:((rb_vclock == Qnil)  ?  nil
-                                              : [OFString stringWithCString:RSTRING_PTR(rb_vclock)
-                                                                     length:RSTRING_LEN(rb_vclock)])
+                 vClock:vClock
                 content:content
                  quorum:quorum
                  commit:commit
              returnBody:returnBody];
-puts("tst11\n");
+
   if(returnBody)
-    rb_return = [key toRuby];
+    rb_return = [key toRubyWithSymbolicKeys];
   else
     rb_return = rb_content;
 
-  puts("tst14\n");
   [pool release];
   return rb_return;
 }
