@@ -157,8 +157,8 @@ extern "C" {
   OFNumber   *msgLength;
   OFNumber   *msgCode;
 
-  pbMsg.set_bucket([bucket cString], [bucket length]);
-  pbMsg.set_key([key cString], [key length]);
+  pbMsg.set_bucket([bucket cString]);
+  pbMsg.set_key([key cString]);
 
   if(quorum) {
     pbMsg.set_r([quorum uInt32Value]);
@@ -207,24 +207,25 @@ extern "C" {
   char       *message;
   OFNumber   *msgLength;
   OFNumber   *msgCode;
-puts("tst10-1\n");
-  pbMsg.set_bucket([bucket cString], [bucket length]);
-  pbMsg.set_key([key cString], [key length]);
-  pbMsg.set_vclock([vClock cString], [vClock length]);
+puts("tst10-01\n");
+  pbMsg.set_bucket([bucket cString]);
+  pbMsg.set_key([key cString]);
+  if(vClock)
+    pbMsg.set_vclock([vClock cString]);
   pbMsg.set_w(quorum);
   pbMsg.set_dw(commit);
   pbMsg.set_return_body(returnBody);
-puts("tst10-2\n");
+puts("tst10-02\n");
   [self packContent:pbContent fromDictionary:content];
-puts("tst10-3\n");
+puts("tst10-03\n");
   msgCode   = [OFNumber numberWithUInt8:MC_PUT_REQUEST];
   msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
   message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
-puts("tst10-4\n");
+puts("tst10-04\n");
   pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-puts("tst10-5\n");
+puts("tst10-05\n");
   [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-puts("tst10-6\n");
+puts("tst10-06\n");
   if(returnBody)
     return [self putResponseAndGetBody];
   else
@@ -238,7 +239,7 @@ puts("tst10-6\n");
   OFNumber         *code;
   char             *message;
   int               iter;
-  
+
   // @TODO: Proper response receiving
   // @TODO2: ie, raise exception on error response
   receiveResponse(msgLength, code, message);
@@ -258,18 +259,18 @@ puts("tst10-6\n");
   OFNumber         *code;
   char             *message;
   int               iter;
-
+puts("tst10-07\n");
   // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
-
+puts("tst10-08\n");
   pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
-
-  contentsArray = [OFMutableArray array];
-
+puts("tst10-09\n");
+  contentsArray = [[OFMutableArray array] retain];
+puts("tst10-10\n");
   for(iter = 0; iter < pbMsg.content_size(); iter++) {
-    [contentsArray addObject:[self unpackContent:pbMsg.content(iter)]];
+    [[contentsArray addObject:[self unpackContent:pbMsg.content(iter)]] retain];
   }
-
+puts("tst10-11\n");
   return [[OFDictionary dictionaryWithKeysAndObjects:
            @"content",    contentsArray,
            @"vclock",     [OFString stringWithCString:pbMsg.vclock().c_str()

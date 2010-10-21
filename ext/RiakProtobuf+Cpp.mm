@@ -70,39 +70,41 @@
 }
 
 // @TODO: Do
-- (void)packContent:(RpbContent)pbContent fromDictionary:(OFDictionary *)content {
+- (void)packContent:(RpbContent *)pbContent fromDictionary:(OFDictionary *)content {
+  
+
 	if([content objectForKey:@"value"]) {
-		pbContent.set_value([[content objectForKey:@"value"] cString]);
+		pbContent->set_value([[content objectForKey:@"value"] cString]);
   }
 
 	if([content objectForKey:@"content_type"]) {
-		pbContent.set_content_type([[content objectForKey:@"content_type"] cString], [[content objectForKey:@"content_type"] length]);
+		pbContent->set_content_type([[content objectForKey:@"content_type"] cString]);
   }
   
   if([content objectForKey:@"charset"]) {
-		pbContent.set_charset([[content objectForKey:@"charset"] cString], [[content objectForKey:@"charset"] length]);
+		pbContent->set_charset([[content objectForKey:@"charset"] cString]);
   }
   
   if([content objectForKey:@"content_encoding"]) {
-		pbContent.set_content_encoding([[content objectForKey:@"content_encoding"] cString], [[content objectForKey:@"content_encoding"] length]);
+		pbContent->set_content_encoding([[content objectForKey:@"content_encoding"] cString]);
   }
   
   if([content objectForKey:@"vtag"]) {
-		pbContent.set_vtag([[content objectForKey:@"vtag"] cString], [[content objectForKey:@"vtag"] length]);
+		pbContent->set_vtag([[content objectForKey:@"vtag"] cString]);
   }
   
   if([content objectForKey:@"last_mod"]) {
-		pbContent.set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
+		pbContent->set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
   }
   
   if([content objectForKey:@"last_mod_usecs"]) {
-		pbContent.set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
+		pbContent->set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
   }
-  
+
   if([content objectForKey:@"links"]) {
     [self packLinks:[content objectForKey:@"links"] InContent:pbContent];
   }
-  
+
   if([content objectForKey:@"user_meta"]) {
 		[self packUserMeta:[content objectForKey:@"user_meta"] InContent:pbContent];
   }
@@ -129,21 +131,21 @@
 }
 
 // @TODO: Do
-- (void)packLinks:(OFDataArray *)links InContent:(RpbContent)content {
+- (void)packLinks:(OFDataArray *)links InContent:(RpbContent *)pbContent {
   size_t iter;
 
   for(iter = 0;  iter < [links count]; iter++) {
-    RpbLink      *_pblink = content.add_links();
+    RpbLink      *_pblink = pbContent->add_links();
     OFDictionary *_rbLink = (OFDictionary *)[links itemAtIndex:iter];
 
     if([_rbLink objectForKey:@"bucket"])
-      _pblink->set_bucket([[_rbLink objectForKey:@"bucket"] cString], [[_rbLink objectForKey:@"bucket"] length]);
+      _pblink->set_bucket([[_rbLink objectForKey:@"bucket"] cString]);
 
     if([_rbLink objectForKey:@"key"])
-      _pblink->set_key([[_rbLink objectForKey:@"key"] cString], [[_rbLink objectForKey:@"key"] length]);
+      _pblink->set_key([[_rbLink objectForKey:@"key"] cString]);
 
     if([_rbLink objectForKey:@"tag"])
-      _pblink->set_tag([[_rbLink objectForKey:@"tag"] cString], [[_rbLink objectForKey:@"tag"] length]);
+      _pblink->set_tag([[_rbLink objectForKey:@"tag"] cString]);
   }
 }
 
@@ -165,18 +167,18 @@
 }
 
 // @TODO: Do
-- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent)content {
+- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent *)pbContent {
   size_t iter;
 
   for(iter = 0;  iter < [userMeta count]; iter++) {
-    RpbPair      *_pbMeta = content.add_usermeta();
+    RpbPair      *_pbMeta = pbContent->add_usermeta();
     OFDictionary *_rbMeta = (OFDictionary *)[userMeta itemAtIndex:iter];
     
     if([_rbMeta objectForKey:@"key"]) {
-      _pbMeta->set_key([[_rbMeta objectForKey:@"key"] cString], [[_rbMeta objectForKey:@"key"] length]);
+      _pbMeta->set_key([[_rbMeta objectForKey:@"key"] cString]);
     }
     if([_rbMeta objectForKey:@"value"]) {
-      _pbMeta->set_value([[_rbMeta objectForKey:@"value"] cString], [[_rbMeta objectForKey:@"value"] length]);
+      _pbMeta->set_value([[_rbMeta objectForKey:@"value"] cString]);
     }
   }
 }
