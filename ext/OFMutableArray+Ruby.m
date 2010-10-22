@@ -7,33 +7,34 @@
 - (VALUE)toRuby {
   VALUE rb_returnArray = rb_ary_new2([self count]);
   size_t iter;
-
+  id tmpObject;
+  
   for(iter = 0; iter < [self count]; iter++) {
-    VALUE rb_object;
-
-    rb_object = [[self objectAtIndex:iter] toRuby];
-
-    if (rb_object)  rb_ary_store(rb_returnArray, iter, rb_object);
-    else            rb_ary_store(rb_returnArray, iter, Qnil);
+    tmpObject = [self objectAtIndex:iter];
+    
+    if([tmpObject respondsToSelector:@selector(toRuby)])
+      rb_ary_store(rb_returnArray, iter, [tmpObject toRuby]);
+    else
+      rb_ary_store(rb_returnArray, iter, Qnil);
   }
-
+  
   return rb_returnArray;
 }
 
 - (VALUE)toRubyWithSymbolicKeys {
   VALUE rb_returnArray = rb_ary_new2([self count]);
   size_t iter;
+  id tmpObject;
 
   for(iter = 0; iter < [self count]; iter++) {
-    VALUE rb_object;
-
-    if([self respondsToSelector:@selector(toRubyWithSymbolicKeys)])
-      rb_object = [[self objectAtIndex:iter] toRubyWithSymbolicKeys];
+    tmpObject = [self objectAtIndex:iter];
+    
+    if([tmpObject respondsToSelector:@selector(toRubyWithSymbolicKeys)])
+      rb_ary_store(rb_returnArray, iter, [tmpObject toRubyWithSymbolicKeys]);
+    else if([tmpObject respondsToSelector:@selector(toRuby)])
+      rb_ary_store(rb_returnArray, iter, [tmpObject toRuby]);
     else
-      rb_object = [[self objectAtIndex:iter] toRuby];
-
-    if (rb_object)  rb_ary_store(rb_returnArray, iter, rb_object);
-    else            rb_ary_store(rb_returnArray, iter, Qnil);
+      rb_ary_store(rb_returnArray, iter, Qnil);
   }
   
   return rb_returnArray;

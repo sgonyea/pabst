@@ -132,7 +132,7 @@
 - (OFDictionary *)putKey:(OFString *)key
                 inBucket:(OFString *)bucket
                   vClock:(OFString *)vClock
-                 content:(OFMutableDictionary *)content
+                 content:(OFDictionary *)content
                   quorum:(uint32_t)quorum
                   commit:(uint32_t)commit
               returnBody:(BOOL)returnBody;
@@ -170,21 +170,53 @@
  */
 - (OFDataArray *)listBucketsRequest;
 /**
- *  Request
- *    Send Message Code, Only
+ *  Response
+ *    Sends the list of bucket names
  */
 - (OFDataArray *)listBucketsResponse;
 
+
+/* List Keys Request */
+/**
+ *  Request
+ *    Send the name of the bucket, in which keys should be listed
+ */
 - (OFMutableArray *)listKeysInBucket:(OFString *)bucket;
+/**
+ *  Response
+ *    Streams the list of Keys, until done
+ */
 - (OFMutableArray *)listKeysGetResponse;
 
-- (OFDictionary *)getBucket:(OFString *)bucket;
+
+/* Get Bucket Properties */
+/**
+ *  Request
+ *    Send the name of the bucket
+ */
+- (OFDictionary *)getBucketProps:(OFString *)bucket;
+/**
+ *  Response
+ *    Sends the bucket's active properties
+ */
 - (OFDictionary *)getBucketResponse;
 
+
+/* Set Bucket Properties */
+/**
+ *  Request
+ *    Send the name of the bucket and the Properties, to be set
+ */
 - (BOOL)setPropInBucket:(OFString *)bucket
-                   nVal:(OFNumber *)nVal
-                 isMult:(BOOL)isMult;
-- (BOOL)setBucketResponse; // Message Code Only
+                   nVal:(uint32_t)nVal
+              allowMult:(BOOL)isMult;
+/**
+ *  Request
+ *    Message Code Only
+ */
+- (BOOL)setBucketResponse;
+
+
 
 - (OFDictionary *)mapReduceRequest:(char *)request
                        contentType:(OFString *)contentType;

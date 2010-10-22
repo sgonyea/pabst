@@ -9,15 +9,12 @@
   size_t iter;
 
   for(iter = 0; iter < [self count]; iter++) {
-    VALUE rb_object;
+    id tempObj = [self objectAtIndex:iter];
 
-    rb_object = [[self objectAtIndex:iter] toRuby];
-
-    if (rb_object) {
-      rb_ary_store(rb_returnArray, iter, rb_object);
-    } else {
+    if([tempObj respondsToSelector:@selector(toRuby)])
+	    rb_ary_store(rb_returnArray, iter, [tempObj toRuby]);
+    else
       rb_ary_store(rb_returnArray, iter, Qnil);
-    }
   }
 
   return rb_returnArray;

@@ -9,15 +9,18 @@
 
   [self enumerateKeysAndObjectsUsingBlock:
    ^(id key, id obj, BOOL *stop) {
-     VALUE keyValue = [key toRuby];
-     VALUE objValue = [obj toRuby];
-     
-     if (!keyValue) { // not! keyValue
+     VALUE keyValue;
+     VALUE objValue;
+
+     if([key respondsToSelector:@selector(toRuby)])
+       keyValue = [key toRuby];
+     else
        keyValue = Qnil;
-     }
-     if (!objValue) { // not! objValue
+
+     if([obj respondsToSelector:@selector(toRuby)])
+       objValue = [obj toRuby];
+     else
        objValue = Qnil;
-     }
      
      rb_hash_aset(rb_returnHash, keyValue, objValue);
    }];
@@ -30,18 +33,19 @@
 
   [self enumerateKeysAndObjectsUsingBlock:
    ^(id key, id obj, BOOL *stop) {
-     VALUE objValue = [obj toRuby];
+     VALUE objValue;
      VALUE keyValue;
 
      if([key respondsToSelector:@selector(toRubySymbol)])
        keyValue = [key toRubySymbol];
-     else
+     else if([key respondsToSelector:@selector(toRuby)])
        keyValue = [key toRuby];
-
-     if(!keyValue)
+     else
        keyValue = Qnil;
 
-     if(!objValue)
+     if([obj respondsToSelector:@selector(toRuby)])
+       objValue = [obj toRuby];
+     else
        objValue = Qnil;
 
      rb_hash_aset(rb_returnHash, keyValue, objValue);

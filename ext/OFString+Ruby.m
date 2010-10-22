@@ -11,7 +11,7 @@
   } else {
   }
   */
-  return rb_str_new(string, length);
+  return rb_str_new2([self cString]);
 }
 
 - (VALUE)toRubySymbol {

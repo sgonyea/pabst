@@ -22,6 +22,11 @@
     [dictionary setObject:of_value                                  \
                    forKey:of_key];                                  \
   }})
+#define RHash_RString_To_OFString(rb_hash, rb_key)(									\
+RString_To_UTF8OFString(rb_hash_aref(	rb_hash, 											\
+																			ID2SYM(rb_intern(rb_key))),		\
+	  										OF_STRING_ENCODING_UTF_8)										\
+  )
 
 
 VALUE rb_ping_request(VALUE);
@@ -30,4 +35,9 @@ VALUE rb_set_client_id_request(VALUE, VALUE); // @TODO
 VALUE rb_get_server_info_request(VALUE);
 VALUE rb_get_key_request(VALUE, VALUE, VALUE);
 VALUE rb_put_key_request(VALUE, VALUE, VALUE, VALUE, VALUE, VALUE, VALUE, VALUE);
+VALUE rb_del_key_request(VALUE, VALUE, VALUE, VALUE);
+VALUE rb_list_buckets_request(VALUE);
 VALUE rb_list_keys_request(VALUE, VALUE);
+VALUE rb_get_bucket_request(VALUE, VALUE);
+VALUE rb_set_bucket_request(VALUE, VALUE, VALUE, VALUE);
+

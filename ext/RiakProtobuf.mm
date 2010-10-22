@@ -201,7 +201,7 @@ extern "C" {
            nil] retain];
 }
 
-- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFMutableDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
+- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
   RpbPutReq   pbMsg;
   RpbContent *pbContent = pbMsg.mutable_content();
   char       *message;
@@ -387,6 +387,49 @@ extern "C" {
   }
 
   return keys;
+}
+
+- (OFDictionary *)getBucketProps:(OFString *)bucket {
+  RpbGetBucketReq	pbMsg;
+  char           *message;
+  OFNumber       *msgLength;
+  OFNumber       *msgCode;
+  
+  pbMsg.set_bucket([bucket cString]);
+  
+  msgCode   = [OFNumber numberWithUInt8:MC_GET_BUCKET_REQUEST];
+  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
+  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+  
+  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
+  
+  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  return [self getBucketResponse];
+}
+
+- (OFDictionary *)getBucketResponse {
+  RpbGetBucketResp pbMsg;
+  OFNumber *msgLength;
+  OFNumber *code;
+  char     *message;
+
+  // @TODO: Proper response receiving
+  receiveResponse(msgLength, code, message);
+
+  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+ 
+  return [[OFDictionary dictionaryWithKeysAndObjects:
+           @"n_val",    	[OFNumber numberWithUInt32:pbMsg.props().n_val()],
+           @"allow_mult", [OFNumber numberWithUInt32:pbMsg.props().allow_mult()],	nil]
+          retain];
+}
+
+- (BOOL)setPropInBucket:(OFString *)bucket nVal:(uint32_t)nVal allowMult:(BOOL)isMult {
+  
+}
+
+- (BOOL)setBucketResponse {
+  
 }
 
 @end

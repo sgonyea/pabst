@@ -15,54 +15,54 @@
   int iter;
   
   if(pbContent.has_value()) {
-    [content setObject:[OFString stringWithCString:pbContent.value().c_str()
-                                            length:pbContent.value().length()]
+    [content setObject:[[OFString stringWithCString:pbContent.value().c_str()
+                                             length:pbContent.value().length()] retain]
                 forKey:@"value"];
   }
   
   if(pbContent.has_content_type()) {
-    [content setObject:[OFString stringWithCString:pbContent.content_type().c_str()
-                                            length:pbContent.content_type().length()]
+    [content setObject:[[OFString stringWithCString:pbContent.content_type().c_str()
+                                             length:pbContent.content_type().length()] retain]
                 forKey:@"content_type"];
   }
   
   if(pbContent.has_charset()) {
-    [content setObject:[OFString stringWithCString:pbContent.charset().c_str()
-                                            length:pbContent.charset().length()]
+    [content setObject:[[OFString stringWithCString:pbContent.charset().c_str()
+                                            length:pbContent.charset().length()] retain]
                 forKey:@"charset"];
   }
 
   if(pbContent.has_content_encoding()) {
-    [content setObject:[OFString stringWithCString:pbContent.content_encoding().c_str()
-                                            length:pbContent.content_encoding().length()]
+    [content setObject:[[OFString stringWithCString:pbContent.content_encoding().c_str()
+                                            length:pbContent.content_encoding().length()] retain]
                 forKey:@"content_encoding"];
   }
   
   if(pbContent.has_vtag()) {
-    [content setObject:[OFString stringWithCString:pbContent.vtag().c_str()
+    [content setObject:[[OFString stringWithCString:pbContent.vtag().c_str()
 		                        							encoding:OF_STRING_ENCODING_ISO_8859_15
-                                            length:pbContent.vtag().length()]
+                                            length:pbContent.vtag().length()] retain]
                 forKey:@"vtag"];
   }
   
   if(pbContent.has_last_mod()) {
-    [content setObject:[OFNumber numberWithUInt32:pbContent.last_mod()]
+    [content setObject:[[OFNumber numberWithUInt32:pbContent.last_mod()] retain]
                 forKey:@"last_mod"];
   }
   
   if(pbContent.has_last_mod_usecs()) {
-    [content setObject:[OFNumber numberWithUInt32:pbContent.last_mod_usecs()]
+    [content setObject:[[OFNumber numberWithUInt32:pbContent.last_mod_usecs()] retain]
                 forKey:@"last_mod_usecs"];
   }
   
   if(pbContent.links_size() > 0) {
-    [content setObject:[self unpackLinksFromContent:pbContent]
+    [content setObject:[[self unpackLinksFromContent:pbContent] retain]
                 forKey:@"links"];
   }
 
   if(pbContent.usermeta_size() > 0) {
     
-    [content setObject:[self unpackUserMetaFromContent:pbContent]
+    [content setObject:[[self unpackUserMetaFromContent:pbContent] retain]
                 forKey:@"user_meta"];
   }
 
