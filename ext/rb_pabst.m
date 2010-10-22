@@ -42,10 +42,8 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   OFDataArray        *contents;
 
   // @TODO: Allow the quorum to be set
-  key         = [[riakpb getKey:[OFString stringWithCString:RSTRING_PTR(key_name)
-                                                     length:RSTRING_LEN(key_name)]
-                     fromBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
-                                                     length:RSTRING_LEN(bucket_name)]
+  key         = [[riakpb getKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
+                     fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                          quorum:nil] autorelease];
 
   vclock      = [key objectForKey:@"vclock"];
@@ -68,6 +66,7 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   return rb_key;
 }
 
+// Welcome to MACRO City!
 VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VALUE rb_content, 
                          VALUE vclock, VALUE rb_quorum,    VALUE rb_commit,  VALUE return_body) {
 
@@ -75,10 +74,8 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   Check_Type(key_name,    T_STRING);
   Check_Type(rb_content,  T_HASH);
 
-  if(rb_quorum != Qnil)
-    Check_Type(rb_quorum, T_FIXNUM);
-  if(rb_commit != Qnil)
-    Check_Type(rb_commit, T_FIXNUM);
+  if(rb_quorum != Qnil) Check_Type(rb_quorum, T_FIXNUM);
+  if(rb_commit != Qnil) Check_Type(rb_commit, T_FIXNUM);
 
   OFAutoreleasePool    *pool        = [[OFAutoreleasePool alloc] init];
   RiakProtobuf         *riakpb      = Get_RiakProtobuf(self);
@@ -95,45 +92,28 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
   if(Qfalse == return_body)
     returnBody = NO;
+
   if(vclock != Qnil) {
     Check_Type(vclock, T_STRING);
-    
-    vClock = [OFString stringWithCString:RSTRING_PTR(rb_vclock)
-                                encoding:OF_STRING_ENCODING_ISO_8859_15
-                                  length:RSTRING_LEN(rb_vclock)];
+    vClock = RString_To_OFString(rb_vclock, OF_STRING_ENCODING_ISO_8859_15);
   } else {
     vClock = nil;
   }
 
-  RHash_RString_To_Dictionary_StrObj(rb_content,
-                                     ID2SYM(rb_intern("value")),
-                                     rb_tmp,
-                                     content,
-                                     @"value",
-                                     OF_STRING_ENCODING_UTF_8);
+  RHash_To_OFDictionary(rb_content, ID2SYM(rb_intern("value")), rb_tmp,
+                        content, @"value", RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8));
 
-  RHash_RString_To_Dictionary_StrObj(rb_content,
-                                     ID2SYM(rb_intern("content_type")),
-                                     rb_tmp,
-                                     content,
-                                     @"content_type",
-                                     OF_STRING_ENCODING_UTF_8);
-  
-  RHash_RString_To_Dictionary_StrObj(rb_content,
-                                     ID2SYM(rb_intern("charset")),
-                                     rb_tmp,
-                                     content,
-                                     @"charset",
-                                     OF_STRING_ENCODING_UTF_8);
-  
-  RHash_RString_To_Dictionary_StrObj(rb_content,
-                                     ID2SYM(rb_intern("content_encoding")),
-                                     rb_tmp,
-                                     content,
-                                     @"content_encoding",
-                                     OF_STRING_ENCODING_UTF_8);
+  RHash_To_OFDictionary(rb_content, ID2SYM(rb_intern("content_type")), rb_tmp,
+                        content, @"content_type", RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8));
+
+  RHash_To_OFDictionary(rb_content, ID2SYM(rb_intern("charset")), rb_tmp,
+                        content, @"charset", RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8));
+
+  RHash_To_OFDictionary(rb_content, ID2SYM(rb_intern("content_encoding")), rb_tmp,
+                        content, @"content_encoding", RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8));
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("links")));
+
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_ARRAY);
 
@@ -143,18 +123,15 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
     for(iter = 0; iter < RARRAY_LEN(rb_tmp); iter++) {
       VALUE 			rb_link_hash_tmp = rb_ary_entry(rb_tmp, iter);
       VALUE				rb_link_elem_tmp;
-      OFString	 *link_bucket;
-      OFString	 *link_key;
-      OFString	 *link_tag;
-
+      OFString	 *link_bucket, *link_key, *link_tag;
+      
       Check_Type(rb_link_hash_tmp, T_HASH);
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("bucket")));
-      
+
 			if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_bucket	= [OFString stringWithCString:RSTRING_PTR(rb_link_elem_tmp)
-                                           length:RSTRING_LEN(rb_link_elem_tmp)];
+        link_bucket	= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         link_bucket = nil;
       }
@@ -163,18 +140,15 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
 			if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_key 		= [OFString stringWithCString:RSTRING_PTR(rb_link_elem_tmp)
-                    	                     length:RSTRING_LEN(rb_link_elem_tmp)];
-      } else {
+        link_key 		= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+      } else
         link_key 		= nil;
-      }
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("tag")));
-      
+
 			if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_tag		= [OFString stringWithCString:RSTRING_PTR(rb_link_elem_tmp)
-                                           length:RSTRING_LEN(rb_link_elem_tmp)];
+        link_tag		= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         link_tag 		= nil;
       }
@@ -209,8 +183,7 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
 			if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
-        uMeta_key 	= [OFString stringWithCString:RSTRING_PTR(rb_uMeta_elem_tmp)
-                                           length:RSTRING_LEN(rb_uMeta_elem_tmp)];
+        uMeta_key 	= RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         uMeta_key 	= nil;
       }
@@ -219,30 +192,27 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
 			if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
-        uMeta_value = [OFString stringWithCString:RSTRING_PTR(rb_uMeta_elem_tmp)
-                                           length:RSTRING_LEN(rb_uMeta_elem_tmp)];
+        uMeta_value = RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         uMeta_value = nil;
       }
 
       [uMeta addItem:[OFDictionary dictionaryWithKeysAndObjects:
-                     @"key",    uMeta_key,
-                     @"value",  uMeta_value,
-                     nil]];
+                       @"key",    uMeta_key,
+                       @"value",  uMeta_value,
+                       nil]];
     }
     [content setObject:uMeta forKey:@"user_meta"];
   }
 
   // @TODO: Check the Ruby encoding and set it accordingly
-  key = [riakpb  putKey:[OFString stringWithCString:RSTRING_PTR(key_name)
-                                             length:RSTRING_LEN(key_name)]
-               inBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
-                                             length:RSTRING_LEN(bucket_name)]
+  key = [[riakpb putKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
+               inBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                  vClock:vClock
                 content:content
                  quorum:quorum
                  commit:commit
-             returnBody:returnBody];
+             returnBody:returnBody] autorelease];
 
   if(returnBody)
     rb_return = [key toRubyWithSymbolicKeys];
@@ -253,6 +223,28 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   return rb_return;
 }
 
+VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw) {
+  Check_Type(bucket_name, T_STRING);
+  Check_Type(key_name,    T_STRING);
+
+  if(rw != Qnil)
+    Check_Type(rw, T_FIXNUM);
+
+  OFAutoreleasePool  *pool  = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
+
+  if([riakpb deleteKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
+            fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+              replicas:NUM2INT(rw)]
+     ) {
+    [pool release];
+    return Qtrue;
+  } else {
+    [pool release];
+    return Qfalse;
+  }
+}
+
 VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
   OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
@@ -261,8 +253,7 @@ VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
 
   // @TODO: Ensure that bucket name is a String, or call :to_s. Raise intelligent exception if that fails
   // @TODO: Figure out how to get the encoding of the String. Assumption is a UTF-8 encoding, for now.
-  keys        = [[riakpb listKeysInBucket:[OFString stringWithCString:RSTRING_PTR(bucket_name)
-                                                               length:RSTRING_LEN(bucket_name)]]
+  keys        = [[riakpb listKeysInBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)]
                  autorelease];
 
   rb_keys     = [keys toRuby];
@@ -270,8 +261,4 @@ VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
   [pool release];
   return rb_keys;
 }
-
-
-
-
 

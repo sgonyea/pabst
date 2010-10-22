@@ -175,12 +175,12 @@ extern "C" {
 }
 
 - (OFDictionary *)getKeyResponse {
-  RpbGetResp    pbMsg;
-  OFMutableArray  *contentsArray;
-  OFNumber     *msgLength;
-  OFNumber     *code;
-  char         *message;
-  int           iter;
+  RpbGetResp      pbMsg;
+  OFMutableArray *contentsArray;
+  OFNumber       *msgLength;
+  OFNumber       *code;
+  char           *message;
+  int             iter;
 
   // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
@@ -246,10 +246,10 @@ extern "C" {
 
   if([code int8Value] == (uint8_t)MC_PUT_RESPONSE)
     return [[OFDictionary dictionaryWithKeysAndObjects:
-             @"successful", YES,  nil] retain];
+             @"successful", @"YES",  nil] retain];
   else
     return [[OFDictionary dictionaryWithKeysAndObjects:
-             @"successful", NO,   nil] retain];
+             @"successful", @"NO",   nil] retain];
 }
 
 - (OFDictionary *)putResponseAndGetBody {
@@ -274,8 +274,65 @@ extern "C" {
            @"vclock",     [OFString stringWithCString:pbMsg.vclock().c_str()
                                              encoding:OF_STRING_ENCODING_ISO_8859_15
                                                length:pbMsg.vclock().length()],
+           @"successful", @"YES",
            nil] retain];
 }
+
+- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket withRW:(int)rw {
+  RpbDelReq   pbMsg;
+  char       *message;
+  OFNumber   *msgLength;
+  OFNumber   *msgCode;
+
+  pbMsg.set_bucket([bucket cString]);
+  pbMsg.set_key([key cString]);
+
+  if(rw)
+    pbMsg.set_rw(rw);
+
+  msgCode   = [OFNumber numberWithUInt8:MC_DEL_REQUEST];
+  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
+  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+
+  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
+
+  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  return [self deleteKeyResponse];
+}
+
+- (BOOL)deleteKeyResponse {
+  OFNumber *msgLength;
+  OFNumber *code;
+  char     *message;
+  
+  // @TODO: Proper response receiving
+  receiveResponse(msgLength, code, message);
+  return YES;
+}
+
+- (OFDataArray *)listBucketsRequest {
+  [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_LIST_BUCKETS_REQUEST]];
+  return [self listBucketsResponse];
+}
+- (OFDataArray *)listBucketsResponse {
+  RpbListBucketsResp  pbMsg;
+  OFNumber           *msgLength;
+  OFNumber           *code;
+  char               *message;
+  int                 iter;
+  OFDataArray    *bucketList = [[OFDataArray dataArrayWithItemSize:sizeof(OFString)] retain];
+
+  receiveResponse(msgLength, code, message);
+  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+
+  for(iter = 0; iter < pbMsg.buckets_size(); iter++) {
+    [bucketList addItem:[[OFString stringWithCString:pbMsg.buckets(iter).c_str()
+                                              length:pbMsg.buckets(iter).length()] retain]];
+  }
+
+  return bucketList;
+}
+
 
 // @TODO: Create an Ostream C++ class and Serialize directly onto the socket buffer.
 // @TODO: Delete pbMsg to clean up memory used.

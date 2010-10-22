@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A016A9FC12261F16004F6B52 /* riak_pb_objc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = A016A9FB12261F16004F6B52 /* riak_pb_objc.1 */; };
 		A016AA0912261F47004F6B52 /* riakclient.pb.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A016AA0712261F47004F6B52 /* riakclient.pb.h */; };
-		A016AA0B12261F54004F6B52 /* riakclient.proto in CopyFiles */ = {isa = PBXBuildFile; fileRef = A016AA0A12261F54004F6B52 /* riakclient.proto */; };
 		A06D14DB126A97350074E61B /* rb_pabst.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14D8126A97350074E61B /* rb_pabst.m */; };
 		A06D14DC126A97350074E61B /* rb_riakpb.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14DA126A97350074E61B /* rb_riakpb.m */; };
 		A06D14E3126A97490074E61B /* riakclient.pb.mm in Sources */ = {isa = PBXBuildFile; fileRef = A06D14DE126A97490074E61B /* riakclient.pb.mm */; };
@@ -34,9 +32,7 @@
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				A016A9FC12261F16004F6B52 /* riak_pb_objc.1 in CopyFiles */,
 				A016AA0912261F47004F6B52 /* riakclient.pb.h in CopyFiles */,
-				A016AA0B12261F54004F6B52 /* riakclient.proto in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -44,10 +40,8 @@
 
 /* Begin PBXFileReference section */
 		A016A9F512261F15004F6B52 /* riak_pb-objc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "riak_pb-objc"; sourceTree = BUILT_PRODUCTS_DIR; };
-		A016A9FB12261F16004F6B52 /* riak_pb_objc.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = riak_pb_objc.1; sourceTree = "<group>"; };
 		A016AA0012261F16004F6B52 /* riak_pb_objc_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = riak_pb_objc_Prefix.pch; sourceTree = "<group>"; };
 		A016AA0712261F47004F6B52 /* riakclient.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riakclient.pb.h; sourceTree = "<group>"; };
-		A016AA0A12261F54004F6B52 /* riakclient.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = riakclient.proto; sourceTree = "<group>"; };
 		A06D14D1126A97350074E61B /* ObjFW+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ObjFW+Ruby.h"; sourceTree = "<group>"; };
 		A06D14D2126A97350074E61B /* OFDataArray+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFDataArray+Ruby.h"; sourceTree = "<group>"; };
 		A06D14D3126A97350074E61B /* OFDictionary+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFDictionary+Ruby.h"; sourceTree = "<group>"; };
@@ -145,8 +139,6 @@
 		A016A9F012261F15004F6B52 /* Documentation */ = {
 			isa = PBXGroup;
 			children = (
-				A016AA0A12261F54004F6B52 /* riakclient.proto */,
-				A016A9FB12261F16004F6B52 /* riak_pb_objc.1 */,
 			);
 			name = Documentation;
 			sourceTree = "<group>";

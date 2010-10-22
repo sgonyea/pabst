@@ -45,3 +45,6 @@ puts "=> #{key.length}"
 puts %Q{a.put_key "tstBucket", "tstKey3", {:value => "threezy peazy!", :content_type => "crap"}, nil, 1, 1, true}
 puts %Q{=> #{a.put_key "tstBucket", "tstKey3", {:value => "threezy peazy!", :content_type => "crap"}, nil, 1, 1, true}}
 
+puts %Q{buckets = a.list_buckets}
+puts %Q{=> #{buckets = a.list_buckets}}
+

@@ -155,7 +155,7 @@
  */
 - (BOOL)deleteKey:(OFString *)key
        fromBucket:(OFString *)bucket
-         replicas:(OFNumber *)replicas;
+         replicas:(int)replicas;
 /**
  *  Response
  *    riak sends Message Code, Only, as confirmation
@@ -168,12 +168,12 @@
  *  Request
  *    Send Message Code, Only
  */
-- (OFArray *)listBucketsRequest;
+- (OFDataArray *)listBucketsRequest;
 /**
  *  Request
  *    Send Message Code, Only
  */
-- (OFArray *)listBucketsResponse;
+- (OFDataArray *)listBucketsResponse;
 
 - (OFMutableArray *)listKeysInBucket:(OFString *)bucket;
 - (OFMutableArray *)listKeysGetResponse;
