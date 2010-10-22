@@ -3,11 +3,13 @@ require './Riakpb'
 require 'riakpb'
 require 'riak'
 
-iterations  = [100, 1000];
+iterations  = [100, 1000]
 
 riak_objc   = Riakpb::Pabst.new
 riak_rbpb   = Riakpb::Client.new
 riak_ripl   = Riak::Client.new
+
+ripl_buck   = riak_ripl["tstBucketRipl"]
 
 iterations.each do |iter|
   Benchmark.bmbm do |x|
@@ -22,20 +24,9 @@ iterations.each do |iter|
       iter.times{ riak_ripl.bucket(      "tstBucket")["tstKey"]}
     }
 
-# Server Info
-    x.report("ObjC:    Get Server Info") {
-      iter.times{ riak_objc.server_info }
-    }
-    x.report("Riakpb:  Get Server Info") {
-      iter.times{ riak_rbpb. }
-    }
-    x.report("Ripple:  Get Server Info") {
-      iter.times{ riak_ripl. }
-    }
-
 # Get Key
     x.report("ObjC:    Get Key") {
-      iter.times{ riak.get_key      "tstBucket", "tstKey" }
+      iter.times{ riak_objc.get_key      "tstBucket", "tstKey" }
     }
     x.report("Riakpb:  Get Key") {
       iter.times{ riak_rbpb.get_request  "tstBucket", "tstKey" }
@@ -45,14 +36,14 @@ iterations.each do |iter|
     }
 
 # Put Key
-    x.report("ObjC:    ") {
-      iter.times{ riak_objc. }
+    x.report("ObjC:    Put Key") {
+      iter.times{|n| riak_objc.put_key      "tstBucketObjC", "tstKey#{n}", {:value => "RAWR OBJC #{n}", :content_type => "application/json"}, nil, 1, 1, true }
     }
-    x.report("Riakpb:  ") {
-      iter.times{ riak_rbpb. }
+    x.report("Riakpb:  Put Key") {
+      iter.times{|n| riak_rbpb.put_request({:bucket => "tstBucketRbPb", :key => "tstKey#{n}", :content => {:value => "RAWR RBPB #{n}", :content_type => "application/json"}, :w => 1, :dw => 1}) }
     }
-    x.report("Ripple:  ") {
-      iter.times{ riak_ripl. }
+    x.report("Ripple:  Put Key") {
+      iter.times{|n| (Riak::RObject.new(ripl_buck, "tstKey#{n}").tap {|ripl| ripl.data = "RAWR RIPL #{n}"; ripl.content_type = "application/json";}).store(:w => 1, :dw => 1, :r => 1) }
     }
 
 # Get Bucket Props
