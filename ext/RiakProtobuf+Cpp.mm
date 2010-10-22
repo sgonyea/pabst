@@ -11,62 +11,64 @@
 @implementation RiakProtobuf (Cpp)
 
 - (OFMutableDictionary *)unpackContent:(RpbContent)pbContent {
-  OFMutableDictionary *content = [[OFMutableDictionary dictionary] retain];
+  OFString 						*contentValue 		= nil,
+           						*contentType			= nil,
+           						*contentCharset		= nil,
+           						*contentEncoding	= nil,
+           						*contentVtag			= nil;
+  OFNumber						*contentLastMod		= nil,
+          						*contentUsecs			= nil;
+  OFDataArray					*contentLinks			= nil,
+  										*contentMetas			= nil;
+  
+
   int iter;
   
-  if(pbContent.has_value()) {
-    [content setObject:[[OFString stringWithCString:pbContent.value().c_str()
-                                             length:pbContent.value().length()] retain]
-                forKey:@"value"];
-  }
-  
-  if(pbContent.has_content_type()) {
-    [content setObject:[[OFString stringWithCString:pbContent.content_type().c_str()
-                                             length:pbContent.content_type().length()] retain]
-                forKey:@"content_type"];
-  }
-  
-  if(pbContent.has_charset()) {
-    [content setObject:[[OFString stringWithCString:pbContent.charset().c_str()
-                                            length:pbContent.charset().length()] retain]
-                forKey:@"charset"];
-  }
+  if(pbContent.has_value())
+    contentValue 		= [[OFString stringWithCString:pbContent.value().c_str()
+                 	  	                      length:pbContent.value().length()] retain];
 
-  if(pbContent.has_content_encoding()) {
-    [content setObject:[[OFString stringWithCString:pbContent.content_encoding().c_str()
-                                            length:pbContent.content_encoding().length()] retain]
-                forKey:@"content_encoding"];
-  }
-  
-  if(pbContent.has_vtag()) {
-    [content setObject:[[OFString stringWithCString:pbContent.vtag().c_str()
-		                        							encoding:OF_STRING_ENCODING_ISO_8859_15
-                                            length:pbContent.vtag().length()] retain]
-                forKey:@"vtag"];
-  }
-  
-  if(pbContent.has_last_mod()) {
-    [content setObject:[[OFNumber numberWithUInt32:pbContent.last_mod()] retain]
-                forKey:@"last_mod"];
-  }
-  
-  if(pbContent.has_last_mod_usecs()) {
-    [content setObject:[[OFNumber numberWithUInt32:pbContent.last_mod_usecs()] retain]
-                forKey:@"last_mod_usecs"];
-  }
-  
-  if(pbContent.links_size() > 0) {
-    [content setObject:[[self unpackLinksFromContent:pbContent] retain]
-                forKey:@"links"];
-  }
+  if(pbContent.has_content_type())
+    contentType 		= [[OFString stringWithCString:pbContent.content_type().c_str()
+                    	                      length:pbContent.content_type().length()] retain];
 
-  if(pbContent.usermeta_size() > 0) {
-    
-    [content setObject:[[self unpackUserMetaFromContent:pbContent] retain]
-                forKey:@"user_meta"];
-  }
+  if(pbContent.has_charset())
+    contentCharset	= [[OFString stringWithCString:pbContent.charset().c_str()
+                                  	        length:pbContent.charset().length()] retain];
+  
+  if(pbContent.has_content_encoding())
+    contentEncoding = [[OFString stringWithCString:pbContent.content_encoding().c_str()
+                    	                      length:pbContent.content_encoding().length()] retain];
+  
+  if(pbContent.has_vtag())
+    contentVtag 		= [[OFString stringWithCString:pbContent.vtag().c_str()
+                                        	encoding:OF_STRING_ENCODING_ISO_8859_15
+                                         		length:pbContent.vtag().length()] retain];
+  
+  if(pbContent.has_last_mod())
+    contentLastMod 	= [[OFNumber  numberWithUInt32:pbContent.last_mod()] retain];
+  
+  if(pbContent.has_last_mod_usecs())
+    contentUsecs 		= [[OFNumber  numberWithUInt32:pbContent.last_mod_usecs()] retain];
+  
+  if(pbContent.links_size() > 0)
+    contentLinks		= [[self unpackLinksFromContent:pbContent] retain];
 
-  return content;
+  if(pbContent.usermeta_size() > 0)
+    contentMetas		= [[self unpackUserMetaFromContent:pbContent] retain];
+
+  return [[OFDictionary dictionaryWithKeysAndObjects:
+           @"value", 						contentValue,
+           @"content_type", 		contentType,
+           @"charset", 					contentCharset,
+           @"content_encoding", contentEncoding,
+           @"vtag", 						contentVtag,
+           @"last_mod", 				contentLastMod,
+           @"last_mod_usecs", 	contentUsecs,
+           @"links", 						contentLinks,
+           @"user_meta", 				contentMetas,
+           nil]
+          retain];
 }
 
 // @TODO: Do
