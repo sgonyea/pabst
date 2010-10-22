@@ -42,6 +42,6 @@ puts "=> #{key.class}"
 puts %Q{key.length}
 puts "=> #{key.length}"
 
-puts %Q{a.put_key "tstBucket", "tstKey3", {:value => "test3", :content_type => "crap"}, nil, 1, 1, true}
-puts %Q{=> #{a.put_key "tstBucket", "tstKey2", {:value => "test3", :content_type => "crap"}, nil, 1, 1, true}}
+puts %Q{a.put_key "tstBucket", "tstKey3", {:value => "threezy peazy!", :content_type => "crap"}, nil, 1, 1, true}
+puts %Q{=> #{a.put_key "tstBucket", "tstKey3", {:value => "threezy peazy!", :content_type => "crap"}, nil, 1, 1, true}}
 

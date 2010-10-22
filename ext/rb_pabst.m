@@ -105,40 +105,35 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
     vClock = nil;
   }
 
-  rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("value")));
-  if(rb_tmp != Qnil) {
-    Check_Type(rb_tmp, T_STRING);
-    [content setObject:[OFString stringWithCString:RSTRING_PTR(rb_tmp)
-                                            length:RSTRING_LEN(rb_tmp)]
-                forKey:@"value"];
-  }
+  RHash_RString_To_Dictionary_StrObj(rb_content,
+                                     ID2SYM(rb_intern("value")),
+                                     rb_tmp,
+                                     content,
+                                     @"value",
+                                     OF_STRING_ENCODING_UTF_8);
 
-  rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_type")));
-  if(rb_tmp != Qnil) {
-    Check_Type(rb_tmp, T_STRING);
-    [content setObject:[OFString stringWithCString:RSTRING_PTR(rb_tmp)
-                                            length:RSTRING_LEN(rb_tmp)]
-                forKey:@"content_type"];
-  }
-
-  rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("charset")));
-  if(rb_tmp != Qnil) {
-    Check_Type(rb_tmp, T_STRING);
-    [content setObject:[OFString stringWithCString:RSTRING_PTR(rb_tmp)
-                                            length:RSTRING_LEN(rb_tmp)]
-                forKey:@"charset"];
-  }
-
-  rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_encoding")));
-  if(rb_tmp != Qnil) {
-    Check_Type(rb_tmp, T_STRING);
-    [content setObject:[OFString stringWithCString:RSTRING_PTR(rb_tmp)
-                                            length:RSTRING_LEN(rb_tmp)]
-                forKey:@"content_encoding"];
-  }
+  RHash_RString_To_Dictionary_StrObj(rb_content,
+                                     ID2SYM(rb_intern("content_type")),
+                                     rb_tmp,
+                                     content,
+                                     @"content_type",
+                                     OF_STRING_ENCODING_UTF_8);
+  
+  RHash_RString_To_Dictionary_StrObj(rb_content,
+                                     ID2SYM(rb_intern("charset")),
+                                     rb_tmp,
+                                     content,
+                                     @"charset",
+                                     OF_STRING_ENCODING_UTF_8);
+  
+  RHash_RString_To_Dictionary_StrObj(rb_content,
+                                     ID2SYM(rb_intern("content_encoding")),
+                                     rb_tmp,
+                                     content,
+                                     @"content_encoding",
+                                     OF_STRING_ENCODING_UTF_8);
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("links")));
-
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_ARRAY);
 
