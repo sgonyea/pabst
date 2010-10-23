@@ -75,41 +75,32 @@
 - (void)packContent:(RpbContent *)pbContent fromDictionary:(OFDictionary *)content {
   
 
-	if([content objectForKey:@"value"]) {
+	if([content objectForKey:@"value"])
 		pbContent->set_value([[content objectForKey:@"value"] cString]);
-  }
 
-	if([content objectForKey:@"content_type"]) {
+	if([content objectForKey:@"content_type"])
 		pbContent->set_content_type([[content objectForKey:@"content_type"] cString]);
-  }
   
-  if([content objectForKey:@"charset"]) {
+  if([content objectForKey:@"charset"])
 		pbContent->set_charset([[content objectForKey:@"charset"] cString]);
-  }
   
-  if([content objectForKey:@"content_encoding"]) {
+  if([content objectForKey:@"content_encoding"])
 		pbContent->set_content_encoding([[content objectForKey:@"content_encoding"] cString]);
-  }
   
-  if([content objectForKey:@"vtag"]) {
+  if([content objectForKey:@"vtag"])
 		pbContent->set_vtag([[content objectForKey:@"vtag"] cString]);
-  }
   
-  if([content objectForKey:@"last_mod"]) {
+  if([content objectForKey:@"last_mod"])
 		pbContent->set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
-  }
   
-  if([content objectForKey:@"last_mod_usecs"]) {
+  if([content objectForKey:@"last_mod_usecs"])
 		pbContent->set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
-  }
 
-  if([content objectForKey:@"links"]) {
+  if([content objectForKey:@"links"])
     [self packLinks:[content objectForKey:@"links"] InContent:pbContent];
-  }
 
-  if([content objectForKey:@"user_meta"]) {
+  if([content objectForKey:@"user_meta"])
 		[self packUserMeta:[content objectForKey:@"user_meta"] InContent:pbContent];
-  }
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {

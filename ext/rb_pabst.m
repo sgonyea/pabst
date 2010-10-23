@@ -78,9 +78,6 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   Check_Type(key_name,    T_STRING);
   Check_Type(rb_content,  T_HASH);
 
-  if(rb_quorum != Qnil) Check_Type(rb_quorum, T_FIXNUM);
-  if(rb_commit != Qnil) Check_Type(rb_commit, T_FIXNUM);
-
   OFAutoreleasePool    *pool        = [[OFAutoreleasePool alloc] init];
   RiakProtobuf         *riakpb      = Get_RiakProtobuf(self);
   VALUE                 rb_vclock   = Qnil,
@@ -94,12 +91,13 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
                        *contentType,
                        *contentCharset,
                        *contentEncoding;
-  int                   quorum      = NUM2INT(rb_quorum),
-                        commit      = NUM2INT(rb_commit);
+  int                   quorum			= nil,
+                        commit			= nil;
   BOOL                  returnBody  = YES;
 
-  if(Qfalse == return_body)
-    returnBody = NO;
+  if(rb_quorum 		!= Qnil) 		quorum      = FIX2INT(rb_quorum);
+  if(rb_commit 		!= Qnil) 		commit      = FIX2INT(rb_commit);
+  if(return_body 	== Qfalse)	returnBody 	= NO;
 
   if(vclock != Qnil) {
     Check_Type(vclock, T_STRING);
@@ -262,16 +260,18 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw) {
   Check_Type(bucket_name, T_STRING);
   Check_Type(key_name,    T_STRING);
-
-  if(rw != Qnil)
-    Check_Type(rw, T_FIXNUM);
+	int replicas;
+  
+  if(rw != Qnil) 	replicas = FIX2INT(rw);
+  else						replicas = nil;
+  
 
   OFAutoreleasePool  *pool  = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
 
   if([riakpb deleteKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
             fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
-              replicas:NUM2INT(rw)]
+              replicas:replicas]
      ) {
     [pool release];
     return Qtrue;
@@ -330,16 +330,15 @@ VALUE rb_get_bucket_request(VALUE self, VALUE bucket_name) {
 VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE allow_mult) {
 
   Check_Type(bucket_name, T_STRING);
-  Check_Type(n_val, 			T_FIXNUM);
 
   OFAutoreleasePool  *pool    	= [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
   VALUE               rb_did_set;
-	uint32_t						nVal			=	NUM2INT(n_val);
+	uint32_t						nVal			= nil;
   BOOL								allowMult	=	NO;
   
-  if(allow_mult == Qtrue)
-	  allowMult = YES;
+  if(n_val 			!= Qnil)	nVal 			= FIX2UINT(n_val);
+  if(allow_mult == Qtrue)	allowMult = YES;
 
 	if([riakpb setPropInBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                         nVal:nVal
