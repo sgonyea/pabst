@@ -24,6 +24,7 @@
 		A0A72BD6122636B7006C6D76 /* libprotobuf-lite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */; };
 		A0A72BD7122636B7006C6D76 /* libprotobuf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */; };
 		A0A72BD8122636B7006C6D76 /* libprotoc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD5122636B7006C6D76 /* libprotoc.dylib */; };
+		E507E0CF127633B30012EB42 /* ObjFW+RubyValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E507E0CE127633B30012EB42 /* ObjFW+RubyValue.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,7 +44,7 @@
 		A016A9F512261F15004F6B52 /* riak_pb-objc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "riak_pb-objc"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A016AA0012261F16004F6B52 /* riak_pb_objc_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = riak_pb_objc_Prefix.pch; sourceTree = "<group>"; };
 		A016AA0712261F47004F6B52 /* riakclient.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riakclient.pb.h; sourceTree = "<group>"; };
-		A06D14D1126A97350074E61B /* ObjFW+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ObjFW+Ruby.h"; sourceTree = "<group>"; };
+		A06D14D1126A97350074E61B /* ObjFW+RubyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ObjFW+RubyValue.h"; sourceTree = "<group>"; };
 		A06D14D2126A97350074E61B /* OFDataArray+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFDataArray+Ruby.h"; sourceTree = "<group>"; };
 		A06D14D3126A97350074E61B /* OFDictionary+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFDictionary+Ruby.h"; sourceTree = "<group>"; };
 		A06D14D4126A97350074E61B /* OFList+Ruby.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OFList+Ruby.h"; sourceTree = "<group>"; };
@@ -75,6 +76,7 @@
 		A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libprotobuf-lite.dylib"; path = "/usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf-lite.dylib"; sourceTree = "<absolute>"; };
 		A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotobuf.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf.dylib; sourceTree = "<absolute>"; };
 		A0A72BD5122636B7006C6D76 /* libprotoc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotoc.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotoc.dylib; sourceTree = "<absolute>"; };
+		E507E0CE127633B30012EB42 /* ObjFW+RubyValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "ObjFW+RubyValue.m"; path = "ext/ObjFW+RubyValue.m"; sourceTree = SOURCE_ROOT; };
 		E546F9011236EAE40016B07A /* MessageCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCodes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -161,7 +163,8 @@
 			children = (
 				A07BF8761274570D000F43EF /* ErrorResponseException.h */,
 				A07BF8771274570D000F43EF /* ErrorResponseException.m */,
-				A06D14D1126A97350074E61B /* ObjFW+Ruby.h */,
+				A06D14D1126A97350074E61B /* ObjFW+RubyValue.h */,
+				E507E0CE127633B30012EB42 /* ObjFW+RubyValue.m */,
 				A06D152A126AA7FF0074E61B /* OFArray+Ruby.h */,
 				A06D152B126AA7FF0074E61B /* OFArray+Ruby.m */,
 				A06D14D2126A97350074E61B /* OFDataArray+Ruby.h */,
@@ -261,6 +264,7 @@
 				A06D1550126AAEB30074E61B /* OFMutableArray+Ruby.m in Sources */,
 				A06D1574126AB9B10074E61B /* RiakProtobuf+Cpp.mm in Sources */,
 				A07BF8781274570D000F43EF /* ErrorResponseException.m in Sources */,
+				E507E0CF127633B30012EB42 /* ObjFW+RubyValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,7 +3,6 @@
 #import "ObjFW+Ruby.h"
 
 @implementation OFMutableArray (Ruby)
-
 - (VALUE)toRuby {
   VALUE rb_returnArray = rb_ary_new2([self count]);
   size_t iter;

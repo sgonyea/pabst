@@ -3,7 +3,6 @@
 #import "ObjFW+Ruby.h"
 
 @implementation OFNumber (Ruby)
-
 - (VALUE)toRuby {
   VALUE rb_returnNumber;
 

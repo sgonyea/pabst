@@ -1,12 +1,21 @@
 require 'benchmark'
-require './Riakpb'
-require 'riakpb'
 require 'riak'
+require './Riakpb'
+require '/Users/sgonyea/Sites/workspace/ripple/riak-client/ext/mri/riakpb'
+
+class Riak::Client
+  attr_accessor :pb_port
+end
+
+class PB
+  include Riak::Client::Protobufs
+end
+
 
 iterations  = [100, 1000]
 
 riak_objc   = Riakpb::Pabst.new
-riak_rbpb   = Riakpb::Client.new
+riak_ripb   = PB.new((Riakpb::Client.new).pb_port = 8087)
 riak_ripl   = Riak::Client.new
 
 ripl_buck   = riak_ripl["tstBucketRipl"]
@@ -47,6 +56,15 @@ iterations.each do |iter|
     }
 
 # Get Bucket Props
+    x.report("ObjC:    Get Bucket") {
+      iter.times{|n| riak_objc.get_bucket "Bucket_Test_ObjC_#{n}" }
+    }
+    x.report("RiplPb:  Get Bucket") {
+      iter.times{|n| riak_ripb.get_bucket "Bucket_Test_RiPb_#{n}" }
+    }
+    x.report("HTTP:    Get Bucket") {
+      iter.times{|n| ActiveSupport::JSON.decode(c.http.get(200, "/riak", "foo#{i}", {})[:body]) }
+    }
 
 # Set Bucket Props
 
