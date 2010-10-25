@@ -5,7 +5,7 @@
 //  Created by Scott Gonyea on 9/1/10.
 //
 #import <ObjFW/ObjFW.h>
-#import "ObjFW+Ruby.h"
+#import "ObjFW+RubyValue.h"
 #import "RiakProtobuf.h"
 #import "rb_pabst.h"
 #import "ruby.h"
