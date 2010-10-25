@@ -77,7 +77,8 @@
 - (OFNumber *)getClientId;
 /**
 
- 
+
+// @TODO: refactor / implement
 /* Set Client ID */
 /**
  *  Request
@@ -120,6 +121,7 @@
                   quorum:(uint32_t)quorum;
 
 
+// @TODO: refactor
 /* Put Key in Bucket Request */
 /**
  *  Request
@@ -144,32 +146,28 @@
 - (OFDictionary *)putResponseAndGetBody;
 
 
-/* Delete (Key) Request */
-/**
+/** Delete Key from Bucket Request
+ **
  *  Request
  *    Send the name of the bucket (1), the key name (2), and the num replicas that should confirm deletion (3)
+ *
+ *  Response
+ *    riak sends Message Code, Only, as confirmation
  */
 - (BOOL)deleteKey:(OFString *)key
        fromBucket:(OFString *)bucket
          replicas:(int)replicas;
-/**
- *  Response
- *    riak sends Message Code, Only, as confirmation
- */
-- (BOOL)deleteKeyResponse;
 
 
-/* List Buckets Request */
-/**
+/** List Buckets Request
+ **
  *  Request
  *    Send Message Code, Only
- */
-- (OFDataArray *)listBucketsRequest;
-/**
+ *
  *  Response
  *    Sends the list of bucket names
  */
-- (OFDataArray *)listBucketsResponse;
+- (OFDataArray *)listBucketsRequest;
 
 
 /* List Keys Request */
@@ -201,9 +199,9 @@
  *  Request
  *    Send the name of the bucket and the Properties, to be set
  */
-- (BOOL)setPropInBucket:(OFString *)bucket
-                   nVal:(uint32_t)nVal
-              allowMult:(BOOL)isMult;
+- (BOOL)setInBucket:(OFString *)bucket
+               nVal:(uint32_t)nVal
+          allowMult:(BOOL)isMult;
 /**
  *  Request
  *    Message Code Only

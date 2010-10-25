@@ -55,7 +55,7 @@
   msgLength = [socket readBigEndianInt32];
   msgCode   = [socket readInt8];
 
-  if(msgLength > 0) {
+  if(msgLength > 0 && protobuf != nil) {
     message   = (char *)[self allocMemoryWithSize:msgLength];
     [socket readNBytes:msgLength intoBuffer:message];
 

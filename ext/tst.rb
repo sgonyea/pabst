@@ -20,7 +20,7 @@ buckets = nil;
               ["server_info", %Q{server_info = a.server_info}],
               ["get_key",     %Q{key = a.get_key "tstBucket", "tstKey"}],
               ["get_bucket",  %Q{bprops = a.get_bucket "tstBucket"}],
-              ["put_key",     %Q{a.put_key "tstBucket", "tstKey7", {:value => "KILL YOUR PARENTS", :content_type => "crap"}, nil, 1, 1, true}],
+              ["put_key",     %Q{a.put_key "tstBucket", "tstKey8", {:value => "KILL YOUR PARENTS", :content_type => "crap"}, nil, 1, 1, true}],
               ["set_bucket",  %Q{bset = a.set_bucket "tstBucket", 3, false}]
             ]
 list_cmds = [ ["list_keys",   %Q{keys = a.list_keys "tstBucket"}],

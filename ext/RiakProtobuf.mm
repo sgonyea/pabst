@@ -167,12 +167,14 @@ extern "C" {
     request.set_r(quorum);
   }
 
-  [self sendMessage:&request withCode:MC_GET_REQUEST];
+  [self sendMessage:&request
+           withCode:MC_GET_REQUEST];
 
-  [self receiveResponseWithCode:MC_GET_RESPONSE inProtobuf:&response];
-  
+  [self receiveResponseWithCode:MC_GET_RESPONSE
+                     inProtobuf:&response];
+
   contentsArray = [[OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)] retain];
-  
+
   for(iter = 0; iter < response.content_size(); iter++)
     [contentsArray addItem:[self unpackContent:response.content(iter)]];
   
@@ -185,29 +187,23 @@ extern "C" {
 }
 
 - (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
+
   RpbPutReq   pbMsg;
   RpbContent *pbContent = pbMsg.mutable_content();
-  char       *message;
-  OFNumber   *msgLength;
-  OFNumber   *msgCode;
 
   pbMsg.set_bucket([bucket cString]);
   pbMsg.set_key([key cString]);
-  if(vClock)
-    pbMsg.set_vclock([vClock cString]);
-  pbMsg.set_w(quorum);
-  pbMsg.set_dw(commit);
   pbMsg.set_return_body(returnBody);
 
-  [self packContent:pbContent fromDictionary:content];
+  if(commit)  pbMsg.set_dw(commit);
+  if(quorum)  pbMsg.set_w(quorum);
+  if(vClock)  pbMsg.set_vclock([vClock cString]);
 
-  msgCode   = [OFNumber numberWithUInt8:MC_PUT_REQUEST];
-  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
-  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+  [self packContent:pbContent
+     fromDictionary:content];
 
-  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-
-  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  [self sendMessage:&pbMsg
+           withCode:MC_PUT_REQUEST];
 
   if(returnBody)
     return [self putResponseAndGetBody];
@@ -216,41 +212,27 @@ extern "C" {
 }
 
 - (OFDictionary *)putResponse {
-  RpbPutResp        pbMsg;
   OFMutableArray   *contentsArray;
-  OFNumber         *msgLength;
-  OFNumber         *code;
-  char             *message;
   int               iter;
 
-  // @TODO: Proper response receiving
-  // @TODO2: ie, raise exception on error response
-  receiveResponse(msgLength, code, message);
-
-  if([code int8Value] == (uint8_t)MC_PUT_RESPONSE)
-    return [[OFDictionary dictionaryWithKeysAndObjects:
-             @"successful", @"YES",  nil] retain];
+  if([self receiveResponseWithCode:MC_PUT_RESPONSE inProtobuf:nil])
+    return [OFDictionary dictionaryWithKeysAndObjects:@"successful", @"YES",  nil];
   else
-    return [[OFDictionary dictionaryWithKeysAndObjects:
-             @"successful", @"NO",   nil] retain];
+    return [OFDictionary dictionaryWithKeysAndObjects:@"successful", @"NO",   nil];
 }
 
 - (OFDictionary *)putResponseAndGetBody {
   RpbPutResp      pbMsg;
   OFDataArray 	 *contentsArray;
-  OFNumber       *msgLength;
-  OFNumber       *code;
-  char           *message;
   int             iter;
 
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+  [self receiveResponseWithCode:MC_PUT_RESPONSE
+                     inProtobuf:&pbMsg];
+
   contentsArray = [[OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)] retain];
 
-  for(iter = 0; iter < pbMsg.content_size(); iter++) {
+  for(iter = 0; iter < pbMsg.content_size(); iter++)
     [contentsArray addItem:[self unpackContent:pbMsg.content(iter)]];
-  }
 
   return [[OFDictionary dictionaryWithKeysAndObjects:
            @"content",    contentsArray,
@@ -261,79 +243,55 @@ extern "C" {
            nil] retain];
 }
 
-- (BOOL)deleteKey:(OFString *)key fromBucket:(OFString *)bucket withRW:(int)rw {
-  RpbDelReq   pbMsg;
-  char       *message;
-  OFNumber   *msgLength;
-  OFNumber   *msgCode;
+- (BOOL)deleteKey:(OFString *)key
+       fromBucket:(OFString *)bucket
+           withRW:(int)rw {
 
-  pbMsg.set_bucket([bucket cString]);
-  pbMsg.set_key([key cString]);
+  RpbDelReq protobuf;
+
+  protobuf.set_bucket([bucket cString]);
+  protobuf.set_key([key cString]);
 
   if(rw)
-    pbMsg.set_rw(rw);
+    protobuf.set_rw(rw);
 
-  msgCode   = [OFNumber numberWithUInt8:MC_DEL_REQUEST];
-  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
-  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+  [self sendMessage:&protobuf withCode:MC_DEL_REQUEST];
 
-  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-
-  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-  return [self deleteKeyResponse];
-}
-
-- (BOOL)deleteKeyResponse {
-  OFNumber *msgLength;
-  OFNumber *code;
-  char     *message;
-  
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
-  return YES;
+  if([self receiveResponseWithCode:MC_DEL_RESPONSE inProtobuf:nil])
+    return YES;
+  else
+    return NO;
 }
 
 - (OFDataArray *)listBucketsRequest {
-  [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_LIST_BUCKETS_REQUEST]];
-  return [self listBucketsResponse];
-}
-- (OFDataArray *)listBucketsResponse {
-  RpbListBucketsResp  pbMsg;
-  OFNumber           *msgLength;
-  OFNumber           *code;
-  char               *message;
+  RpbListBucketsResp  protobuf;
   int                 iter;
-  OFDataArray    *bucketList = [[OFDataArray dataArrayWithItemSize:sizeof(OFString)] retain];
+  OFDataArray        *bucketList;
+  
+  bucketList = [[OFDataArray dataArrayWithItemSize:sizeof(OFString)] retain];
 
-  receiveResponse(msgLength, code, message);
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+  [self sendEmptyRequestCode:MC_LIST_BUCKETS_REQUEST];
 
-  for(iter = 0; iter < pbMsg.buckets_size(); iter++) {
-    [bucketList addItem:[[OFString stringWithCString:pbMsg.buckets(iter).c_str()
-                                              length:pbMsg.buckets(iter).length()] retain]];
-  }
+  [self receiveResponseWithCode:MC_LIST_BUCKETS_RESPONSE
+                     inProtobuf:&protobuf];
+
+  for(iter = 0; iter < protobuf.buckets_size(); iter++)
+    [bucketList addItem:[OFString stringWithCString:protobuf.buckets(iter).c_str()
+                                             length:protobuf.buckets(iter).length()]];
 
   return bucketList;
+  
 }
 
 
 // @TODO: Create an Ostream C++ class and Serialize directly onto the socket buffer.
 // @TODO: Delete pbMsg to clean up memory used.
 - (OFMutableArray *)listKeysInBucket:(OFString *)bucket {
-  RpbListKeysReq  pbMsg;
-  char           *message;
-  OFNumber       *msgLength;
-  OFNumber       *msgCode;
+  RpbListKeysReq  protobuf;
 
-  pbMsg.set_bucket([bucket cString]);
+  protobuf.set_bucket([bucket cString]);
 
-  msgCode   = [OFNumber numberWithUInt8:MC_LIST_KEYS_REQUEST];
-  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
-  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
-
-  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-
-  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  [self sendMessage:&protobuf withCode:MC_LIST_KEYS_REQUEST];
   return [self listKeysGetResponse];
 }
 
@@ -366,6 +324,9 @@ extern "C" {
       }
 
       isDone = pbMsg.done();
+    }
+    else {
+      isDone = YES;
     }
   }
 
