@@ -24,7 +24,7 @@
 - (int8_t)receiveResponseWithCode:(int8_t)expectedCode
                        inProtobuf:(google::protobuf::Message *)protobuf;
 
-- (OFMutableDictionary *)unpackContent:(RpbContent)pbContent;
+- (OFDictionary *)unpackContent:(RpbContent)pbContent;
 
 - (void)packContent:(RpbContent *)pbContent
      fromDictionary:(OFDictionary *)content;

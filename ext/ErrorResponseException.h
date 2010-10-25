@@ -4,7 +4,7 @@
 //
 //  Created by Scott Gonyea on 10/24/10.
 //
-#import <ObjFW/ObjFW.h>
+#import "ObjFW/OFExceptions.h"
 #import "RiakProtobuf.h"
 
 @interface ErrorResponseException : OFException {

@@ -49,10 +49,11 @@
  */
 - (void)dealloc;
 
+//@TODO: Handler for errors?  Specific method needed?
 /**
  *  Protobuf containing an error message
  */
-- (OFDictionary *)errorResponse:(char *)response;
+//- (OFDictionary *)errorResponse:(char *)response;
 
 
 /** Ping
@@ -85,16 +86,6 @@
  *    Send the Client ID cached in RiakProtobuf
  */
 - (BOOL)setClientId;
-/**
- *  Request
- *    Send an arbitrary Client ID to riak
- */
-- (BOOL)setClientId:(OFString *)clientId;
-/**
- *  Response
- *    riak sends Message Code, Only, as confirmation
- */
-- (BOOL)setClientIdResponse;
 
 
 /** Get Server Information
@@ -121,11 +112,14 @@
                   quorum:(uint32_t)quorum;
 
 
-// @TODO: refactor
-/* Put Key in Bucket Request */
-/**
+// @TODO: refactor more
+/** Put Key in Bucket Request
+ **
  *  Request
  *    Send the name of the bucket (1), the key (2), the key's content (3), the quorum (4), and the commits-before-ack (5)
+ *
+ *  Response
+ *    riak sends either the message code or (optionally) two values: the bucket+key's vclock (1) and content(s) on the key (2)
  */
 - (OFDictionary *)putKey:(OFString *)key
                 inBucket:(OFString *)bucket
@@ -134,16 +128,6 @@
                   quorum:(uint32_t)quorum
                   commit:(uint32_t)commit
               returnBody:(BOOL)returnBody;
-/**
- *  Response
- *    riak sends just a message code, confirming that it done got putted
- */
-- (OFDictionary *)putResponse;
-/**
- *  Response
- *    riak sends two values: the bucket+key's vclock (1) and content(s) on the key (2)
- */
-- (OFDictionary *)putResponseAndGetBody;
 
 
 /** Delete Key from Bucket Request
@@ -175,12 +159,12 @@
  *  Request
  *    Send the name of the bucket, in which keys should be listed
  */
-- (OFMutableArray *)listKeysInBucket:(OFString *)bucket;
+- (OFDataArray *)listKeysInBucket:(OFString *)bucket;
 /**
  *  Response
  *    Streams the list of Keys, until done
  */
-- (OFMutableArray *)listKeysGetResponse;
+- (OFDataArray *)listKeysGetResponse;
 
 
 /** Get Bucket Properties
@@ -194,19 +178,17 @@
 - (OFDictionary *)getBucket:(OFString *)bucket;
 
 
-/* Set Bucket Properties */
-/**
+/** Set Bucket Properties
+ **
  *  Request
  *    Send the name of the bucket and the Properties, to be set
- */
-- (BOOL)setInBucket:(OFString *)bucket
-               nVal:(uint32_t)nVal
-          allowMult:(BOOL)isMult;
-/**
+ *
  *  Request
  *    Message Code Only
  */
-- (BOOL)setBucketResponse;
+- (BOOL)setForBucket:(OFString *)bucket
+                nVal:(uint32_t)nVal
+           allowMult:(BOOL)isMult;
 
 
 /* Map/Reduce Request */

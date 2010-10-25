@@ -47,15 +47,16 @@
 - (int8_t)receiveResponseWithCode:(int8_t)expectedCode
                        inProtobuf:(google::protobuf::Message *)protobuf {
 
-  OFAutoreleasePool *pool = [[OFAutoreleasePool alloc] init];
-  uint32_t  msgLength;
-  int8_t    msgCode;
-  char     *message;
+  uint32_t  					msgLength;
+  int8_t    					msgCode;
+  char     					 *message;
 
   msgLength = [socket readBigEndianInt32];
   msgCode   = [socket readInt8];
 
   if(msgLength > 0 && protobuf != nil) {
+	  OFAutoreleasePool  *pool = [[OFAutoreleasePool alloc] init];
+
     message   = (char *)[self allocMemoryWithSize:msgLength];
     [socket readNBytes:msgLength intoBuffer:message];
 
@@ -65,85 +66,75 @@
     } else if(msgCode == MC_ERROR_RESPONSE) {
       RpbErrorResp error;
       error.ParseFromArray(message, msgLength);
-      [pool release];
+
+      [pool drain];
       @throw [ErrorResponseException newWithClass:isa
                                      errorCString:error.errmsg().c_str()
                                         errorCode:error.errcode()];
     } else {
-      [pool release];
+      [pool drain];
       @throw [ErrorResponseException newWithClass:isa
                                       errorString:@"Unknown Exception Occured. Expected Message Code not received, yet an Error was not indicated. Bug?"
                                         errorCode:-1];
     }
+    [pool drain];
   }
-  [pool release];
+
   return msgCode;
 }
 
-- (OFMutableDictionary *)unpackContent:(RpbContent)pbContent {
-  OFString 						*contentValue 		= nil,
-           						*contentType			= nil,
-           						*contentCharset		= nil,
-           						*contentEncoding	= nil,
-           						*contentVtag			= nil;
-  OFNumber						*contentLastMod		= nil,
-          						*contentUsecs			= nil;
+- (OFDictionary *)unpackContent:(RpbContent)pbContent {
   OFDataArray					*contentLinks			= nil,
   										*contentMetas			= nil;
-  
+  OFMutableDictionary	*content					= [OFMutableDictionary dictionary];
 
-  int iter;
-  
   if(pbContent.has_value())
-    contentValue 		= [[OFString stringWithCString:pbContent.value().c_str()
-                 	  	                      length:pbContent.value().length()] retain];
+    [content setObject:[OFString stringWithCString:pbContent.value().c_str()
+                                                length:pbContent.value().length()]
+                forKey:@"value"];
 
   if(pbContent.has_content_type())
-    contentType 		= [[OFString stringWithCString:pbContent.content_type().c_str()
-                    	                      length:pbContent.content_type().length()] retain];
+    [content setObject:[OFString stringWithCString:pbContent.content_type().c_str()
+                                                length:pbContent.content_type().length()]
+                forKey:@"content_type"];
 
   if(pbContent.has_charset())
-    contentCharset	= [[OFString stringWithCString:pbContent.charset().c_str()
-                                  	        length:pbContent.charset().length()] retain];
-  
+    [content setObject:[OFString stringWithCString:pbContent.charset().c_str()
+                                                length:pbContent.charset().length()]
+                forKey:@"charset"];
+
   if(pbContent.has_content_encoding())
-    contentEncoding = [[OFString stringWithCString:pbContent.content_encoding().c_str()
-                    	                      length:pbContent.content_encoding().length()] retain];
-  
+    [content setObject:[OFString stringWithCString:pbContent.content_encoding().c_str()
+                                                length:pbContent.content_encoding().length()]
+                forKey:@"content_encoding"];
+
   if(pbContent.has_vtag())
-    contentVtag 		= [[OFString stringWithCString:pbContent.vtag().c_str()
-                                        	encoding:OF_STRING_ENCODING_ISO_8859_15
-                                         		length:pbContent.vtag().length()] retain];
-  
+    [content setObject:[OFString stringWithCString:pbContent.vtag().c_str()
+                                              encoding:OF_STRING_ENCODING_ISO_8859_15
+                                                length:pbContent.vtag().length()]
+                forKey:@"vtag"];
+
   if(pbContent.has_last_mod())
-    contentLastMod 	= [[OFNumber  numberWithUInt32:pbContent.last_mod()] retain];
+    [content setObject:[OFNumber  numberWithUInt32:pbContent.last_mod()]
+                forKey:@"last_mod"];
   
   if(pbContent.has_last_mod_usecs())
-    contentUsecs 		= [[OFNumber  numberWithUInt32:pbContent.last_mod_usecs()] retain];
+    [content setObject:[OFNumber  numberWithUInt32:pbContent.last_mod_usecs()]
+                forKey:@"last_mod_usecs"];
   
   if(pbContent.links_size() > 0)
-    contentLinks		= [[self unpackLinksFromContent:pbContent] retain];
+    [content setObject:[self unpackLinksFromContent:pbContent]
+                forKey:@"links"];
 
   if(pbContent.usermeta_size() > 0)
-    contentMetas		= [[self unpackUserMetaFromContent:pbContent] retain];
+    [content setObject:[self unpackUserMetaFromContent:pbContent]
+                forKey:@"user_meta"];
 
-  return [[OFDictionary dictionaryWithKeysAndObjects:
-           @"value", 						contentValue,
-           @"content_type", 		contentType,
-           @"charset", 					contentCharset,
-           @"content_encoding", contentEncoding,
-           @"vtag", 						contentVtag,
-           @"last_mod", 				contentLastMod,
-           @"last_mod_usecs", 	contentUsecs,
-           @"links", 						contentLinks,
-           @"user_meta", 				contentMetas,
-           nil]
-          retain];
+  return [OFDictionary dictionaryWithDictionary:content];
 }
 
 // @TODO: Do
 - (void)packContent:(RpbContent *)pbContent fromDictionary:(OFDictionary *)content {
-  
 
 	if([content objectForKey:@"value"])
 		pbContent->set_value([[content objectForKey:@"value"] cString]);
@@ -174,8 +165,8 @@
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
-  OFDataArray  *linksArray = [OFDataArray dataArrayWithItemSize:pbContent.links_size()];
-  int           iter;
+  OFDataArray  				*linksArray = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
+  int           			 iter;
 
   for(iter = 0; iter < pbContent.links_size(); iter++) {
     RpbLink link = pbContent.links(iter);
@@ -190,6 +181,7 @@
                          nil]
                 atIndex:iter];
   }
+
   return linksArray;
 }
 
