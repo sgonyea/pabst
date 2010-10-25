@@ -6,10 +6,13 @@
 //
 #import <ObjFW/ObjFW.h>
 #import "MessageCodes.h"
+#import "ErrorResponseException.h"
 
 @interface RiakProtobuf : OFObject {
   OFTCPSocket  *socket;
-  OFNumber     *clientId;
+  int           clientId;
+  OFString     *nodeName;
+  OFString     *nodePort;
 @private
 }
 /**
@@ -52,32 +55,29 @@
 - (OFDictionary *)errorResponse:(char *)response;
 
 
-/* Ping */
-/**
+/** Ping
+ **
  *  Request
  *    Send Message Code, Only
- */
-- (BOOL)pingRequest;  // Message Code Only
-/**
+ *
  *  Response
  *    riak sends Message Code, Only, as confirmation
  */
-- (BOOL)pingGetResponse;
+- (BOOL)pingRiak;
 
 
-/* Get Client ID */
-/**
+/** Get Client ID
+ **
  *  Request
  *    Send Message Code, Only
- */
-- (OFNumber *)getClientId;
-/**
+ *
  *  Response
  *    riak sends a 4-byte value
  */
-- (OFNumber *)clientIdGetResponse;
+- (OFNumber *)getClientId;
+/**
 
-
+ 
 /* Set Client ID */
 /**
  *  Request
@@ -96,35 +96,31 @@
 - (BOOL)setClientIdResponse;
 
 
-/* Get Server Information */
-/**
+/** Get Server Information
+ **
  *  Request
  *    Send Message Code, Only
- */
-- (OFDictionary *)getServerInfoRequest;
-/**
+ *
  *  Response
  *    riak sends two values: the name of the node (1) and the server version (2)
  */
-- (OFDictionary *)getServerInfoResponse;
+- (OFDictionary *)getServerInfo;
 
 
-/* Get (Key) Request */
-/**
+/** Get Key from Bucket Request
+ **
  *  Request
  *    Send the name of the bucket (1), the key (2), and the quorum (3)
- */
-- (OFDictionary *)getKey:(OFString *)key
-              fromBucket:(OFString *)bucket
-                  quorum:(OFNumber *)quorum;
-/**
+ *
  *  Response
  *    riak sends two values: the bucket+key's vclock (1) and content(s) on the key (2)
  */
-- (OFDictionary *)getKeyResponse;
+- (OFDictionary *)getKey:(OFString *)key
+              fromBucket:(OFString *)bucket
+                  quorum:(uint32_t)quorum;
 
 
-/* Put (Key) Request */
+/* Put Key in Bucket Request */
 /**
  *  Request
  *    Send the name of the bucket (1), the key (2), the key's content (3), the quorum (4), and the commits-before-ack (5)
@@ -189,17 +185,15 @@
 - (OFMutableArray *)listKeysGetResponse;
 
 
-/* Get Bucket Properties */
-/**
+/** Get Bucket Properties
+ **
  *  Request
  *    Send the name of the bucket
- */
-- (OFDictionary *)getBucketProps:(OFString *)bucket;
-/**
+ *
  *  Response
  *    Sends the bucket's active properties
  */
-- (OFDictionary *)getBucketResponse;
+- (OFDictionary *)getBucket:(OFString *)bucket;
 
 
 /* Set Bucket Properties */
@@ -217,9 +211,17 @@
 - (BOOL)setBucketResponse;
 
 
-
-- (OFDictionary *)mapReduceRequest:(char *)request
-                       contentType:(OFString *)contentType;
-- (OFDictionary *)mapReduceResponse;
+/* Map/Reduce Request */
+/**
+ *  Request
+ *    Send the request (String) and the type of request, describing how to parse
+ */
+- (OFDataArray *)mapReduceRequest:(OFString *)request
+                    ofContentType:(OFString *)contentType;
+/**
+ *  Response
+ *    Streams the Map/Reduce response until done
+ */
+- (OFDataArray *)mapReduceResponse;
 
 @end

@@ -27,17 +27,17 @@ list_cmds = [ ["list_keys",   %Q{keys = a.list_keys "tstBucket"}],
               ["list_buckets",%Q{buckets = a.list_buckets}]
             ]
 
-Benchmark.bmbm do |x|
+#Benchmark.bmbm do |x|
 
 @commands.each do |message, command|
-    x.report("100  #{message}") {
-      100.times{ eval command }
-    }
+#    x.report("100  #{message}") {
+#      100.times{ eval command }
+#    }
     puts %Q{#{message}:}
     puts %Q{ #{command}}
     puts %Q{=> #{eval command}}
   end
-end
+#end
 
 Benchmark.bmbm do |x|
   @commands.each do |message, command|

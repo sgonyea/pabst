@@ -40,4 +40,4 @@ VALUE rb_list_buckets_request(VALUE);
 VALUE rb_list_keys_request(VALUE, VALUE);
 VALUE rb_get_bucket_request(VALUE, VALUE);
 VALUE rb_set_bucket_request(VALUE, VALUE, VALUE, VALUE);
-
+VALUE rb_map_reduce_request(VALUE, VALUE, VALUE);

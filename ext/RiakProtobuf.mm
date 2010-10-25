@@ -13,61 +13,87 @@ extern "C" {
 @implementation RiakProtobuf
 
 - (id)init {
-  self    = [super init];
-  socket  = [OFTCPSocket socket];
+  self      = [super init];
+  clientId  = nil;
+  socket    = [OFTCPSocket socket];
+  nodeName  = nil;
+  nodePort  = nil;
 
   return self;
 }
 
-- (id)initWithService:(OFString *)port onNode:(OFString *)node {
-  self    = [super init];
-  socket  = [OFTCPSocket socket];
+- (id)initWithService:(OFString *)port
+               onNode:(OFString *)node {
+
+  self      = [self init];
 
   [self connectToService:port onNode:node];
 
+  nodeName  = [OFString stringWithString:node];
+  nodePort  = [OFString stringWithString:port];
+
   return self;
 }
 
-- (void)connectToService:(OFString *)port onNode:(OFString *)node {
-  [socket connectToService:port onNode:node];
-  [socket setKeepAlivesEnabled:YES];
+/**
+ * Shh! This is private!
+ *  Connect to the riak node, identified in nodeName / nodePort
+ */
+- (void)connectToService {
+  if(nodeName and nodePort) {
+    [socket connectToService:nodePort onNode:nodeName];
+    [socket setKeepAlivesEnabled:YES];
+  }
+}
+
+- (void)connectToService:(OFString *)port
+                  onNode:(OFString *)node {
+  if(nodeName)
+    [nodeName release];
+
+  if(nodePort)
+    [nodePort release];
+  
+  nodeName = [OFString stringWithString:node];
+  nodePort  = [OFString stringWithString:port];
+
+  [self connectToService];
+}
+
+- (void)sendEmptyRequestCode:(uint8_t)code {
+  [socket bufferWrites];
+
+  [socket writeBigEndianInt32:((uint32_t)MSG_CODE_SIZE)];
+  [socket writeInt8:code];
+
+  @try {
+    [socket flushWriteBuffer];
+  }
+  @catch (OFNotConnectedException *e) {
+    [self connectToService];
+  }
+  @finally {
+    [socket flushWriteBuffer];
+  }
 }
 
 - (void)sendEmptyMessageWithCode:(OFNumber *)msgCode {
-  [socket bufferWrites];
-
-  [socket writeBigEndianInt32:[[OFNumber numberWithUInt32:MSG_CODE_SIZE] uInt32Value]];
-  [socket writeInt8:[msgCode uInt8Value]];
-
-  [socket flushWriteBuffer];
+  [self sendEmptyRequestCode:[msgCode uInt8Value]];
 }
 
-- (void)sendMessageWithLength:(OFNumber *)msgLength message:(char *)message messageCode:(OFNumber *)msgCode {
+- (void)sendMessageWithLength:(OFNumber *)msgLength
+                      message:(char *)message
+                  messageCode:(OFNumber *)msgCode {
+
   [socket bufferWrites];
 
-  [socket writeBigEndianInt32:[[msgLength numberByIncreasing] uInt32Value]];
+  [socket writeBigEndianInt32:[msgLength uInt32Value] + MC_SIZE];
   [socket writeInt8:[msgCode uInt8Value]];
   [socket writeNBytes:[msgLength uInt32Value] fromBuffer:message];
 
   [socket flushWriteBuffer];
 }
-/*
-- (void)receiveResponses {
-  size_t    msgLength;
-  uint8_t   msgCode;
-  char     *message;
 
-  msgLength = [[OFNumber numberWithUInt32:[socket readBigEndianInt32]]
-               numberByDecreasing];
-
-  code      = [OFNumber numberWithUInt8:[socket readInt8]];
-
-  if([msgLength uInt32Value] > 0) {
-    message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
-    [socket readNBytes:[msgLength uInt32Value] intoBuffer:message];
-  }
-}
-*/
 - (void)dealloc {
   // Clean-up code here.
   [socket release];
@@ -75,44 +101,25 @@ extern "C" {
   [super dealloc];
 }
 
-- (BOOL)pingRequest {
-  [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_PING_REQUEST]];
-  return [self pingGetResponse];
-}
+- (BOOL)pingRiak {
+  [self sendEmptyRequestCode:MC_PING_REQUEST];
 
-- (BOOL)pingGetResponse {
-  OFNumber *msgLength;
-  OFNumber *code;
-  char     *message;
+  if([self receiveResponseWithCode:MC_PING_RESPONSE inProtobuf:nil])
+    return YES;
 
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
-
-  return YES;
+  return NO;
 }
 
 - (OFNumber *)getClientId {
-  [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_GET_CLIENT_ID_REQUEST]];
+  [self sendEmptyRequestCode:MC_GET_CLIENT_ID_REQUEST];
 
-  OFNumber *newClientId = [self clientIdGetResponse];
+  RpbGetClientIdResp protobuf;
 
-  clientId = [newClientId copy];
+  if([self receiveResponseWithCode:MC_GET_CLIENT_ID_RESPONSE inProtobuf:&protobuf]) {
+    clientId = *(int *)protobuf.client_id().c_str();
 
-  return newClientId;
-}
-
-- (OFNumber *)clientIdGetResponse {
-  RpbGetClientIdResp pbMsg;
-  OFNumber *msgLength;
-  OFNumber *code;
-  char     *message;
-
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
-
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
-
-  return [[OFNumber numberWithInt:*(int *)pbMsg.client_id().c_str()] retain];
+    return [OFNumber numberWithInt:clientId];
+  }
 }
 
 // @TODO: Rest of Set Client ID
@@ -122,83 +129,59 @@ extern "C" {
   if (!clientId) {
     [self getClientId];
   }
-  protobuf.set_client_id((void *)[clientId uInt32Value], sizeof(uint32_t));
+  protobuf.set_client_id((const void *)&clientId, sizeof(clientId));
   // @TODO: Set the client ID
   return YES;
 }
 
-- (OFDictionary *)getServerInfoRequest {
-  [self sendEmptyMessageWithCode:[OFNumber numberWithUInt8:MC_GET_SERVER_INFO_REQUEST]];
-  return [self getServerInfoResponse];
+- (OFDictionary *)getServerInfo {
+  [self sendEmptyRequestCode:MC_GET_SERVER_INFO_REQUEST];
+
+  RpbGetServerInfoResp protobuf;
+
+  if([self receiveResponseWithCode:MC_GET_SERVER_INFO_RESPONSE inProtobuf:&protobuf]) {
+    return [[OFDictionary dictionaryWithKeysAndObjects:
+             @"node",    [OFString stringWithCString:protobuf.node().c_str()
+                                              length:protobuf.node().length()],
+             @"version", [OFString stringWithCString:protobuf.server_version().c_str()
+                                              length:protobuf.server_version().length()],
+             nil] retain];
+  } else {
+    return nil;
+  }
 }
 
-- (OFDictionary *)getServerInfoResponse {
-  RpbGetServerInfoResp pbMsg;
-  OFNumber *msgLength;
-  OFNumber *code;
-  char     *message;
+- (OFDictionary *)getKey:(OFString *)key
+              fromBucket:(OFString *)bucket
+                  quorum:(uint32_t)quorum {
 
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
+  RpbGetReq     request;
+  RpbGetResp    response;
+  OFDataArray  *contentsArray;
+  int           iter;
 
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
-
-  return [[OFDictionary dictionaryWithKeysAndObjects:
-                @"node",    [OFString stringWithCString:pbMsg.node().c_str()
-                                                 length:pbMsg.node().length()],
-                @"version", [OFString stringWithCString:pbMsg.server_version().c_str()
-                                                 length:pbMsg.server_version().length()],
-                nil] retain];
-}
-
-- (OFDictionary *)getKey:(OFString *)key fromBucket:(OFString *)bucket quorum:(OFNumber *)quorum {
-  RpbGetReq   pbMsg;
-  char       *message;
-  OFNumber   *msgLength;
-  OFNumber   *msgCode;
-
-  pbMsg.set_bucket([bucket cString]);
-  pbMsg.set_key([key cString]);
+  request.set_bucket([bucket cString]);
+  request.set_key([key cString]);
 
   if(quorum) {
-    pbMsg.set_r([quorum uInt32Value]);
+    request.set_r(quorum);
   }
 
-  msgCode   = [OFNumber numberWithUInt8:MC_GET_REQUEST];
-  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
-  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+  [self sendMessage:&request withCode:MC_GET_REQUEST];
 
-  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
-
-  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-  return [self getKeyResponse];
-}
-
-- (OFDictionary *)getKeyResponse {
-  RpbGetResp      pbMsg;
-  OFMutableArray *contentsArray;
-  OFNumber       *msgLength;
-  OFNumber       *code;
-  char           *message;
-  int             iter;
-
-  // @TODO: Proper response receiving
-  receiveResponse(msgLength, code, message);
-
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
-
-  contentsArray = [OFMutableArray array];
-
-  for(iter = 0; iter < pbMsg.content_size(); iter++) {
-    [contentsArray addObject:[self unpackContent:pbMsg.content(iter)]];
-  }
-
-  return [[OFDictionary dictionaryWithKeysAndObjects:
-           @"content", contentsArray,
-           @"vclock",  [OFString stringWithCString:pbMsg.vclock().c_str()
-                                          encoding:OF_STRING_ENCODING_ISO_8859_15
-                                            length:pbMsg.vclock().length()],
-           nil] retain];
+  [self receiveResponseWithCode:MC_GET_RESPONSE inProtobuf:&response];
+  
+  contentsArray = [[OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)] retain];
+  
+  for(iter = 0; iter < response.content_size(); iter++)
+    [contentsArray addItem:[self unpackContent:response.content(iter)]];
+  
+  return [OFDictionary dictionaryWithKeysAndObjects:
+          @"content", contentsArray,
+          @"vclock",  [OFString stringWithCString:response.vclock().c_str()
+                                         encoding:OF_STRING_ENCODING_ISO_8859_15
+                                           length:response.vclock().length()],
+          nil];
 }
 
 - (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
@@ -389,47 +372,107 @@ extern "C" {
   return keys;
 }
 
-- (OFDictionary *)getBucketProps:(OFString *)bucket {
-  RpbGetBucketReq	pbMsg;
-  char           *message;
-  OFNumber       *msgLength;
-  OFNumber       *msgCode;
+- (OFDictionary *)getBucket:(OFString *)bucket {
+  RpbGetBucketReq   request;
+  RpbGetBucketResp  response;
+
+  request.set_bucket([bucket cString]);
   
+  [self sendMessage:&request withCode:MC_GET_BUCKET_REQUEST];
+
+  if([self receiveResponseWithCode:MC_GET_BUCKET_RESPONSE inProtobuf:&response]) {
+    return [OFDictionary dictionaryWithKeysAndObjects:
+             @"n_val",    	[OFNumber numberWithUInt32:response.props().n_val()],
+             @"allow_mult", [OFNumber numberWithUInt32:response.props().allow_mult()],
+             nil];
+  } else {
+    return nil;
+  }
+}
+
+- (BOOL)setPropInBucket:(OFString *)bucket nVal:(uint32_t)nVal allowMult:(BOOL)isMult {
+  RpbSetBucketReq   pbMsg;
+  RpbBucketProps   *bProp = pbMsg.mutable_props();
+  char             *message;
+  OFNumber         *msgLength;
+  OFNumber         *msgCode;
+
   pbMsg.set_bucket([bucket cString]);
-  
-  msgCode   = [OFNumber numberWithUInt8:MC_GET_BUCKET_REQUEST];
+  bProp->set_n_val(nVal);
+  bProp->set_allow_mult(isMult);
+
+  msgCode   = [OFNumber numberWithUInt8:MC_SET_BUCKET_REQUEST];
   msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
   message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
   
   pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
   
   [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
-  return [self getBucketResponse];
+  return [self setBucketResponse];
 }
 
-- (OFDictionary *)getBucketResponse {
-  RpbGetBucketResp pbMsg;
+- (BOOL)setBucketResponse {
   OFNumber *msgLength;
   OFNumber *code;
   char     *message;
 
   // @TODO: Proper response receiving
   receiveResponse(msgLength, code, message);
-
-  pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
- 
-  return [[OFDictionary dictionaryWithKeysAndObjects:
-           @"n_val",    	[OFNumber numberWithUInt32:pbMsg.props().n_val()],
-           @"allow_mult", [OFNumber numberWithUInt32:pbMsg.props().allow_mult()],	nil]
-          retain];
+  return YES;
 }
 
-- (BOOL)setPropInBucket:(OFString *)bucket nVal:(uint32_t)nVal allowMult:(BOOL)isMult {
+- (OFDataArray *)mapReduceRequest:(OFString *)request ofContentType:(OFString *)contentType {
+  RpbMapRedReq   pbMsg;
+  char          *message;
+  OFNumber      *msgLength;
+  OFNumber      *msgCode;
   
+  pbMsg.set_request([request cString]);
+  pbMsg.set_content_type([contentType cString]);
+
+  msgCode   = [OFNumber numberWithUInt8:MC_MAP_REDUCE_REQUEST];
+  msgLength = [OFNumber numberWithUInt32:pbMsg.ByteSize()];
+  message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+
+  pbMsg.SerializeToArray(message, [msgLength uInt32Value]);
+
+  [self sendMessageWithLength:msgLength message:message messageCode:msgCode];
+  return [self mapReduceResponse];  
 }
 
-- (BOOL)setBucketResponse {
-  
+- (OFDataArray *)mapReduceResponse {
+  RpbMapRedResp     pbMsg;
+  OFDataArray      *reduceResponses = [[OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)] retain];
+  OFNumber         *msgLength;
+  OFNumber         *code;
+  char             *message;
+  BOOL              isDone = NO;
+
+  // @TODO: Proper response receiving
+  while(!isDone) {
+    msgLength = [[OFNumber numberWithUInt32:[socket readBigEndianInt32]]
+                 numberByDecreasing];
+    code      = [OFNumber numberWithUInt8:[socket readInt8]];
+
+    if([msgLength uInt32Value] > 0) {
+      message   = (char *)[self allocMemoryWithSize:[msgLength uInt32Value]];
+      [socket readNBytes:[msgLength uInt32Value] intoBuffer:message];
+
+      pbMsg.ParseFromArray(message, [msgLength uInt32Value]);
+
+      if(pbMsg.has_response()) {
+        [reduceResponses addItem:[OFDictionary dictionaryWithObject:[OFString stringWithCString:pbMsg.response().c_str()
+                                                                                         length:pbMsg.response().length()]
+                                                             forKey:[OFNumber numberWithUInt32:pbMsg.phase()]]];
+      }
+
+      isDone = pbMsg.done();
+    } else {
+      isDone = YES; // This should never happen? @TODO: Verify
+    }
+  }
+
+  return reduceResponses;
 }
 
 @end

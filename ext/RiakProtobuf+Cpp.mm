@@ -7,8 +7,78 @@
  */
 
 #import "RiakProtobuf+Cpp.h"
+#import <exception>
 
 @implementation RiakProtobuf (Cpp)
+
+- (void)sendMessage:(google::protobuf::Message *)protobuf
+           withCode:(uint8_t)code {
+
+  OFAutoreleasePool *pool = [[OFAutoreleasePool alloc] init];
+  uint32_t    pbLength;
+  char       *pbMessage;
+
+    pbLength  = protobuf->ByteSize();
+    pbMessage = (char *)[self allocMemoryWithSize:pbLength];
+
+    protobuf->SerializeToArray(pbMessage, pbLength);
+
+    [socket bufferWrites];
+
+    [socket writeBigEndianInt32:(pbLength + MC_SIZE)];
+    [socket writeInt8:code];
+    [socket writeNBytes:pbLength fromBuffer:pbMessage];
+
+    [socket flushWriteBuffer];
+//  }
+/* @TODO: Do some exception handling */
+//  catch (std::exception& e) {
+    /* blah */
+//  }
+/*} catch (IOException &e) {
+
+  } catch (RuntimeException &e) {
+
+  }
+*/
+  [pool release];
+}
+
+- (int8_t)receiveResponseWithCode:(int8_t)expectedCode
+                       inProtobuf:(google::protobuf::Message *)protobuf {
+
+  OFAutoreleasePool *pool = [[OFAutoreleasePool alloc] init];
+  uint32_t  msgLength;
+  int8_t    msgCode;
+  char     *message;
+
+  msgLength = [socket readBigEndianInt32];
+  msgCode   = [socket readInt8];
+
+  if(msgLength > 0) {
+    message   = (char *)[self allocMemoryWithSize:msgLength];
+    [socket readNBytes:msgLength intoBuffer:message];
+
+    if(msgCode == expectedCode) {
+      protobuf->ParseFromArray(message, msgLength);
+
+    } else if(msgCode == MC_ERROR_RESPONSE) {
+      RpbErrorResp error;
+      error.ParseFromArray(message, msgLength);
+      [pool release];
+      @throw [ErrorResponseException newWithClass:isa
+                                     errorCString:error.errmsg().c_str()
+                                        errorCode:error.errcode()];
+    } else {
+      [pool release];
+      @throw [ErrorResponseException newWithClass:isa
+                                      errorString:@"Unknown Exception Occured. Expected Message Code not received, yet an Error was not indicated. Bug?"
+                                        errorCode:-1];
+    }
+  }
+  [pool release];
+  return msgCode;
+}
 
 - (OFMutableDictionary *)unpackContent:(RpbContent)pbContent {
   OFString 						*contentValue 		= nil,
@@ -97,10 +167,10 @@
 		pbContent->set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
 
   if([content objectForKey:@"links"])
-    [self packLinks:[content objectForKey:@"links"] InContent:pbContent];
+    [self packLinks:[content objectForKey:@"links"] inContent:pbContent];
 
   if([content objectForKey:@"user_meta"])
-		[self packUserMeta:[content objectForKey:@"user_meta"] InContent:pbContent];
+		[self packUserMeta:[content objectForKey:@"user_meta"] inContent:pbContent];
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
@@ -124,7 +194,7 @@
 }
 
 // @TODO: Do
-- (void)packLinks:(OFDataArray *)links InContent:(RpbContent *)pbContent {
+- (void)packLinks:(OFDataArray *)links inContent:(RpbContent *)pbContent {
   size_t iter;
 
   for(iter = 0;  iter < [links count]; iter++) {
@@ -160,7 +230,7 @@
 }
 
 // @TODO: Do
-- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent *)pbContent {
+- (void)packUserMeta:(OFDataArray *)userMeta inContent:(RpbContent *)pbContent {
   size_t iter;
 
   for(iter = 0;  iter < [userMeta count]; iter++) {

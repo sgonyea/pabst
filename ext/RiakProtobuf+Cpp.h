@@ -15,13 +15,28 @@
  */
 @interface RiakProtobuf (Cpp)
 
+/**
+ *  Receive a single response
+ */
+- (void)sendMessage:(google::protobuf::Message *)protobuf
+           withCode:(uint8_t)code;
+
+- (int8_t)receiveResponseWithCode:(int8_t)expectedCode
+                       inProtobuf:(google::protobuf::Message *)protobuf;
+
 - (OFMutableDictionary *)unpackContent:(RpbContent)pbContent;
-- (void)packContent:(RpbContent *)pbContent fromDictionary:(OFDictionary *)content;
+
+- (void)packContent:(RpbContent *)pbContent
+     fromDictionary:(OFDictionary *)content;
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent;
-- (void)packLinks:(OFDataArray *)links InContent:(RpbContent *)content;
+
+- (void)packLinks:(OFDataArray *)links
+        inContent:(RpbContent *)content;
 
 - (OFDataArray *)unpackUserMetaFromContent:(RpbContent)pbContent;
-- (void)packUserMeta:(OFDataArray *)userMeta InContent:(RpbContent *)content;
+
+- (void)packUserMeta:(OFDataArray *)userMeta
+           inContent:(RpbContent *)content;
 
 @end

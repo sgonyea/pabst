@@ -1,42 +1,46 @@
+
 #import "rb_pabst.h"
 
 VALUE rb_ping_request(VALUE self) {
   RiakProtobuf   *riakpb  = Get_RiakProtobuf(self);
 
-  if([riakpb pingRequest])
-    return Qtrue;
-  else
-    return Qfalse;
+  @try {
+    if([riakpb pingRiak])
+      return Qtrue;
+  }
+  @catch (OFException *e) {
+    rb_raise(rb_eRuntimeError, "Caught: %s", [[e string] cString]);
+    [e dealloc];
+  }
+
+  return Qfalse;
 }
 
 VALUE rb_get_client_id_request(VALUE self) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
-  OFNumber           *client_id;
+  OFNumber           *clientId;
   VALUE               rb_client_id;
 
-  client_id     = [[riakpb getClientId] autorelease];
-  rb_client_id  = [client_id toRuby]; // rb_str_new([client_id cString], [client_id cStringLength]);
+  clientId      = [riakpb getClientId];
+  rb_client_id  = [clientId toRuby];
 
-  [pool release];
+  [clientId release];
   return rb_client_id;
 }
 
 VALUE rb_get_server_info_request(VALUE self) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
-  OFDictionary       *server_info;
+  OFDictionary       *serverInfo;
   VALUE               rb_server_info;
 
-  server_info     = [[riakpb getServerInfoRequest] autorelease];
-  rb_server_info  = [server_info toRuby];
+  serverInfo      = [riakpb getServerInfo];
+  rb_server_info  = [serverInfo toRuby];
 
-  [pool release];
+  [serverInfo release];
   return rb_server_info;
 }
 
 VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
-  OFAutoreleasePool  *pool        = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb      = Get_RiakProtobuf(self);
   VALUE               rb_key      = rb_hash_new(),
                       rb_vclock   = Qnil,
@@ -46,27 +50,30 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   OFDataArray        *contents;
 
   // @TODO: Allow the quorum to be set
-  key         = [[riakpb getKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
-                     fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
-                         quorum:nil] autorelease];
+  key         = [riakpb getKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
+                    fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+                        quorum:nil]; // @TODO: Don't hardcode the quorum, yo
 
   vclock      = [key objectForKey:@"vclock"];
   contents    = [key objectForKey:@"content"];
 
-  if (vclock)   rb_vclock   = [vclock toRuby];
+  if (vclock)
+    rb_vclock = [vclock toRuby];
 
   if (contents) {
     if([contents respondsToSelector:@selector(toRubyWithSymbolicKeys)])
       rb_contents = [contents toRubyWithSymbolicKeys];
-    else
+    else if([contents respondsToSelector:@selector(toRuby)])
       rb_contents = [contents toRuby];
+    else
+      rb_contents = Qnil;
   }
 
   rb_hash_aset( rb_key, ID2SYM(rb_intern("vclock")),    (rb_vclock)   ? rb_vclock
                                                                       : Qnil);
   rb_hash_aset( rb_key, ID2SYM(rb_intern("contents")),  (rb_contents) ? rb_contents
                                                                       : Qnil);
-  [pool release];
+  [key release];
   return rb_key;
 }
 
@@ -315,16 +322,16 @@ VALUE rb_get_bucket_request(VALUE self, VALUE bucket_name) {
 
 	Check_Type(bucket_name, T_STRING);
 
-  OFAutoreleasePool  *pool    	= [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
-  VALUE               rb_props;
-  
-	rb_props	= [[[riakpb getBucketProps:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)]
-                autorelease]
-               toRubyWithSymbolicKeys];
-  
-  [pool release];
-  return rb_props;
+  RiakProtobuf       *riakpb = Get_RiakProtobuf(self);
+
+  OFDictionary       *bucketProperties;
+  VALUE               rb_bucket_props;
+
+	bucketProperties  = [riakpb getBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
+  rb_bucket_props   = [bucketProperties toRubyWithSymbolicKeys];
+
+  [bucketProperties release];
+  return rb_bucket_props;
 }
 
 VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE allow_mult) {
@@ -351,3 +358,19 @@ VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE al
   return rb_did_set;
 }
 
+VALUE rb_map_reduce_request(VALUE self, VALUE rb_request, VALUE rb_content_type) {
+  Check_Type(rb_request, T_STRING);
+  Check_Type(rb_content_type, T_STRING);
+
+  OFAutoreleasePool  *pool    	= [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
+  VALUE               rb_mapred = rb_hash_new();
+
+  rb_mapred = [[[riakpb mapReduceRequest:RString_To_OFString(rb_request,       OF_STRING_ENCODING_UTF_8)
+                           ofContentType:RString_To_OFString(rb_content_type,  OF_STRING_ENCODING_UTF_8)]
+                autorelease]
+               toRuby];
+
+  [pool release];
+  return rb_mapred;
+}
