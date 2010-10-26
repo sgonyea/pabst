@@ -40,7 +40,7 @@ dir_config(extension_name)
 objc_flags      = `objfw-config --objcflags`.chomp
 $CFLAGS        << objc_flags + `objfw-config --cflags`.chomp
 $CPPFLAGS      << objc_flags + `objfw-config --cppflags`.chomp
-$DLDFLAGS      << " -lprotobuf -lobjfw "
+$DLDFLAGS      << " -lobjc -lprotobuf -lobjfw "
 $DLDFLAGS      << `objfw-config --libs`.chomp
 $DLDFLAGS      << `objfw-config --reexport`.chomp
 CXX_EXT        << "mm"
