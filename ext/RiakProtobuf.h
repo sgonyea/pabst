@@ -33,11 +33,6 @@
                   onNode:(OFString *)node;
 
 /**
- *  Send a request who's only content is a Message Code
- */
-- (void)sendEmptyMessageWithCode:(OFNumber *)msgCode;
-
-/**
  *  Send a request made up of a Message Code and a serialized Protobuf
  */
 - (void)sendMessageWithLength:(OFNumber *)length
