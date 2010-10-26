@@ -1,5 +1,6 @@
 
 #import <ObjFW/ObjFW.h>
+#import <ObjFW/OFDictionary.h>
 #import "ruby.h"
 
 /**

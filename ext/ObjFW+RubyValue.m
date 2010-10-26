@@ -61,7 +61,8 @@
 @implementation OFDictionary (RubyValue)
 - (VALUE)toRuby {
   VALUE rb_returnHash = rb_hash_new();
-  
+
+#ifdef OF_HAVE_BLOCKS
   [self enumerateKeysAndObjectsUsingBlock:
    ^(id key, id obj, BOOL *stop) {
      VALUE keyValue;
@@ -79,13 +80,35 @@
      
      rb_hash_aset(rb_returnHash, keyValue, objValue);
    }];
+#else
+  OFEnumerator *keyEnum = [self keyEnumerator];
+  id 		dictKey,	dictObj;
+  VALUE keyValue,	objValue;
+
+  while(dictKey = [keyEnum nextObject]) {
+    dictVal = [self objectForKey:dictKey];
+
+    if([dictKey respondsToSelector:@selector(toRuby)])
+      keyValue	=	[dictKey toRuby];
+    else
+      keyValue	= Qnil;
+    
+    if([dictObj respondsToSelector:@selector(toRuby)])
+      objValue	=	[dictObj toRuby];
+    else
+      objValue	= Qnil;
+
+    rb_hash_aset(rb_returnHash, keyValue, objValue);
+  }
+#endif
   
   return rb_returnHash;
 }
 
 - (VALUE)toRubyWithSymbolicKeys {
   VALUE rb_returnHash = rb_hash_new();
-  
+
+#ifdef OF_HAVE_BLOCKS
   [self enumerateKeysAndObjectsUsingBlock:
    ^(id key, id obj, BOOL *stop) {
      VALUE objValue;
@@ -105,6 +128,29 @@
      
      rb_hash_aset(rb_returnHash, keyValue, objValue);
    }];
+#else
+  OFEnumerator *keyEnum = [self keyEnumerator];
+  id 		dictKey,	dictObj;
+  VALUE keyValue,	objValue;
+  
+  while(dictKey = [keyEnum nextObject]) {
+    dictVal = [self objectForKey:dictKey];
+    
+    if([dictKey respondsToSelector:@selector(toRubySymbol)])
+      keyValue = [dictKey toRubySymbol];
+    else if([dictKey respondsToSelector:@selector(toRuby)])
+      keyValue = [dictKey toRuby];
+    else
+      keyValue = Qnil;
+
+    if([dictObj respondsToSelector:@selector(toRuby)])
+      objValue	=	[dictObj toRuby];
+    else
+      objValue	= Qnil;
+    
+    rb_hash_aset(rb_returnHash, keyValue, objValue);
+  }
+#endif
   
   return rb_returnHash;
 }
