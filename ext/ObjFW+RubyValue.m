@@ -86,7 +86,7 @@
   VALUE keyValue,	objValue;
 
   while(dictKey = [keyEnum nextObject]) {
-    dictVal = [self objectForKey:dictKey];
+    dictObj = [self objectForKey:dictKey];
 
     if([dictKey respondsToSelector:@selector(toRuby)])
       keyValue	=	[dictKey toRuby];
@@ -134,7 +134,7 @@
   VALUE keyValue,	objValue;
   
   while(dictKey = [keyEnum nextObject]) {
-    dictVal = [self objectForKey:dictKey];
+    dictObj = [self objectForKey:dictKey];
     
     if([dictKey respondsToSelector:@selector(toRubySymbol)])
       keyValue = [dictKey toRubySymbol];
