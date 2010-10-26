@@ -22,10 +22,10 @@
     [dictionary setObject:of_value                                  \
                    forKey:of_key];                                  \
   }})
-#define RHash_RString_To_OFString(rb_hash, rb_key)(									\
-RString_To_UTF8OFString(rb_hash_aref(	rb_hash, 											\
-																			ID2SYM(rb_intern(rb_key))),		\
-	  										OF_STRING_ENCODING_UTF_8)										\
+#define RHash_RString_To_OFString(rb_hash, rb_key)(                  \
+RString_To_UTF8OFString(rb_hash_aref(  rb_hash,                       \
+                                      ID2SYM(rb_intern(rb_key))),    \
+                        OF_STRING_ENCODING_UTF_8)                    \
   )
 
 

@@ -47,15 +47,15 @@
 - (int8_t)receiveResponseWithCode:(int8_t)expectedCode
                        inProtobuf:(google::protobuf::Message *)protobuf {
 
-  uint32_t  					msgLength;
-  int8_t    					msgCode;
-  char     					 *message;
+  uint32_t            msgLength;
+  int8_t              msgCode;
+  char                *message;
 
   msgLength = [socket readBigEndianInt32];
   msgCode   = [socket readInt8];
 
   if(msgLength > 0 && protobuf != nil) {
-	  OFAutoreleasePool  *pool = [[OFAutoreleasePool alloc] init];
+    OFAutoreleasePool  *pool = [[OFAutoreleasePool alloc] init];
 
     message   = (char *)[self allocMemoryWithSize:msgLength];
     [socket readNBytes:msgLength intoBuffer:message];
@@ -84,9 +84,9 @@
 }
 
 - (OFDictionary *)unpackContent:(RpbContent)pbContent {
-  OFDataArray					*contentLinks			= nil,
-  										*contentMetas			= nil;
-  OFMutableDictionary	*content					= [OFMutableDictionary dictionary];
+  OFDataArray          *contentLinks      = nil,
+                      *contentMetas      = nil;
+  OFMutableDictionary  *content          = [OFMutableDictionary dictionary];
 
   if(pbContent.has_value())
     [content setObject:[OFString stringWithCString:pbContent.value().c_str()
@@ -136,37 +136,37 @@
 // @TODO: Do
 - (void)packContent:(RpbContent *)pbContent fromDictionary:(OFDictionary *)content {
 
-	if([content objectForKey:@"value"])
-		pbContent->set_value([[content objectForKey:@"value"] cString]);
+  if([content objectForKey:@"value"])
+    pbContent->set_value([[content objectForKey:@"value"] cString]);
 
-	if([content objectForKey:@"content_type"])
-		pbContent->set_content_type([[content objectForKey:@"content_type"] cString]);
+  if([content objectForKey:@"content_type"])
+    pbContent->set_content_type([[content objectForKey:@"content_type"] cString]);
   
   if([content objectForKey:@"charset"])
-		pbContent->set_charset([[content objectForKey:@"charset"] cString]);
+    pbContent->set_charset([[content objectForKey:@"charset"] cString]);
   
   if([content objectForKey:@"content_encoding"])
-		pbContent->set_content_encoding([[content objectForKey:@"content_encoding"] cString]);
+    pbContent->set_content_encoding([[content objectForKey:@"content_encoding"] cString]);
   
   if([content objectForKey:@"vtag"])
-		pbContent->set_vtag([[content objectForKey:@"vtag"] cString]);
+    pbContent->set_vtag([[content objectForKey:@"vtag"] cString]);
   
   if([content objectForKey:@"last_mod"])
-		pbContent->set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
+    pbContent->set_last_mod([[content objectForKey:@"last_mod"] uInt32Value]);
   
   if([content objectForKey:@"last_mod_usecs"])
-		pbContent->set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
+    pbContent->set_last_mod_usecs([[content objectForKey:@"last_mod_usecs"] uInt32Value]);
 
   if([content objectForKey:@"links"])
     [self packLinks:[content objectForKey:@"links"] inContent:pbContent];
 
   if([content objectForKey:@"user_meta"])
-		[self packUserMeta:[content objectForKey:@"user_meta"] inContent:pbContent];
+    [self packUserMeta:[content objectForKey:@"user_meta"] inContent:pbContent];
 }
 
 - (OFDataArray *)unpackLinksFromContent:(RpbContent)pbContent {
-  OFDataArray  				*linksArray = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
-  int           			 iter;
+  OFDataArray          *linksArray = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
+  int                  iter;
 
   for(iter = 0; iter < pbContent.links_size(); iter++) {
     RpbLink link = pbContent.links(iter);

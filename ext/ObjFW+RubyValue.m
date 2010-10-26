@@ -10,7 +10,7 @@
     id tempObj = [self objectAtIndex:iter];
     
     if([tempObj respondsToSelector:@selector(toRuby)])
-	    rb_ary_store(rb_returnArray, iter, [tempObj toRuby]);
+      rb_ary_store(rb_returnArray, iter, [tempObj toRuby]);
     else
       rb_ary_store(rb_returnArray, iter, Qnil);
   }

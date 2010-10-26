@@ -18,21 +18,21 @@
 }
 
 -(id) initWithClass:(Class)class_ errorString:(OFString *)error {
-	self = [super initWithClass: class_];
+  self = [super initWithClass: class_];
 
   string = [[OFString alloc] initWithFormat:
             @"Riak responded with an error:%s", [error cString]];
 
-	return self;
+  return self;
 }
 
 -(id) initWithClass:(Class)class_ errorCString:(char *)error {
-	self = [super initWithClass: class_];
+  self = [super initWithClass: class_];
 
   string = [[OFString alloc] initWithFormat:
             @"Riak responded with an error:%s", error];
 
-	return self;
+  return self;
 }
 
 @end

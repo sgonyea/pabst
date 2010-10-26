@@ -26,11 +26,10 @@ extern "C" {
                onNode:(OFString *)node {
 
   self      = [self init];
-
-  [self connectToService:port onNode:node];
-
   nodeName  = [OFString stringWithString:node];
   nodePort  = [OFString stringWithString:port];
+
+  [self connectToService:port onNode:node];
 
   return self;
 }
@@ -53,7 +52,7 @@ extern "C" {
 
   if(nodePort)
     [nodePort release];
-  
+
   nodeName = [OFString stringWithString:node];
   nodePort  = [OFString stringWithString:port];
 
@@ -75,10 +74,6 @@ extern "C" {
   @finally {
     [socket flushWriteBuffer];
   }
-}
-
-- (void)sendEmptyMessageWithCode:(OFNumber *)msgCode {
-  [self sendEmptyRequestCode:[msgCode uInt8Value]];
 }
 
 - (void)sendMessageWithLength:(OFNumber *)msgLength
@@ -116,9 +111,9 @@ extern "C" {
   RpbGetClientIdResp protobuf;
 
   if([self receiveResponseWithCode:MC_GET_CLIENT_ID_RESPONSE inProtobuf:&protobuf])
-    clientId	= *(int *)protobuf.client_id().c_str();
+    clientId  = *(int *)protobuf.client_id().c_str();
   else
-    clientId	= 0;
+    clientId  = 0;
 
   return [OFNumber numberWithInt:clientId];
 }
@@ -156,11 +151,11 @@ extern "C" {
               fromBucket:(OFString *)bucket
                   quorum:(uint32_t)quorum {
 
-  RpbGetReq     			request;
-  RpbGetResp    			response;
-  OFDataArray  			 *contentsArray;
-  OFDictionary 			 *keyDictionary;
-  int           			iter;
+  RpbGetReq           request;
+  RpbGetResp          response;
+  OFDataArray         *contentsArray;
+  OFDictionary        *keyDictionary;
+  int                 iter;
 
   request.set_bucket([bucket cString]);
   request.set_key([key cString]);
@@ -191,13 +186,19 @@ extern "C" {
   return keyDictionary;
 }
 
-- (OFDictionary *)putKey:(OFString *)key inBucket:(OFString *)bucket vClock:(OFString *)vClock content:(OFDictionary *)content quorum:(uint32_t)quorum commit:(uint32_t)commit returnBody:(BOOL)returnBody {
+- (OFDictionary *)putKey:(OFString *)key
+                inBucket:(OFString *)bucket
+                  vClock:(OFString *)vClock
+                 content:(OFDictionary *)content
+                  quorum:(uint32_t)quorum
+                  commit:(uint32_t)commit
+              returnBody:(BOOL)returnBody {
 
-  RpbPutReq   		request;
-  RpbPutResp			response;
-  RpbContent 		 *pbContent = request.mutable_content();
-  OFDictionary	 *keyDictionary;
-  OFDataArray 	 *contentsArray;
+  RpbPutReq       request;
+  RpbPutResp      response;
+  RpbContent      *pbContent = request.mutable_content();
+  OFDictionary   *keyDictionary;
+  OFDataArray    *contentsArray;
   int             iter;
 
   request.set_bucket([bucket cString]);
@@ -214,23 +215,23 @@ extern "C" {
 
   if(returnBody) {
     contentsArray = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
-    
+
     for(iter = 0; iter < response.content_size(); iter++)
       [contentsArray addItem:[self unpackContent:response.content(iter)]];
-    
-    keyDictionary	= [[OFDictionary dictionaryWithKeysAndObjects:
+
+    keyDictionary  = [OFDictionary dictionaryWithKeysAndObjects:
                       @"content",    contentsArray,
                       @"vclock",     [OFString stringWithCString:response.vclock().c_str()
                                                         encoding:OF_STRING_ENCODING_ISO_8859_15
                                                           length:response.vclock().length()],
                       @"successful", @"YES",
-                      nil] retain];
-    
+                      nil];
+
     return keyDictionary;
   }
 
   return [OFDictionary dictionaryWithKeysAndObjects:
-          @"successful",	@"YES",
+          @"successful",  @"YES",
           nil];
 }
 
@@ -322,7 +323,7 @@ extern "C" {
       isDone = YES;
     }
 
-  	[pool drain];
+    [pool drain];
   }
 
   return keys;
@@ -331,16 +332,16 @@ extern "C" {
 - (OFDictionary *)getBucket:(OFString *)bucket {
   RpbGetBucketReq   request;
   RpbGetBucketResp  response;
-
+  
   request.set_bucket([bucket cString]);
   
   [self sendMessage:&request withCode:MC_GET_BUCKET_REQUEST];
-
+  
   if([self receiveResponseWithCode:MC_GET_BUCKET_RESPONSE inProtobuf:&response]) {
     return [OFDictionary dictionaryWithKeysAndObjects:
-             @"n_val",    	[OFNumber numberWithUInt32:response.props().n_val()],
-             @"allow_mult", [OFNumber numberWithUInt32:response.props().allow_mult()],
-             nil];
+            @"n_val",      [OFNumber numberWithUInt32:response.props().n_val()],
+            @"allow_mult", [OFNumber numberWithUInt32:response.props().allow_mult()],
+            nil];
   } else {
     return nil;
   }
@@ -362,7 +363,8 @@ extern "C" {
     return NO;
 }
 
-- (OFDataArray *)mapReduceRequest:(OFString *)request ofContentType:(OFString *)contentType {
+- (OFDataArray *)mapReduceRequest:(OFString *)request
+                    ofContentType:(OFString *)contentType {
   RpbMapRedReq   pbMsg;
   char          *message;
   OFNumber      *msgLength;

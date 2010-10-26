@@ -18,14 +18,14 @@ VALUE rb_ping_request(VALUE self) {
 
 VALUE rb_get_client_id_request(VALUE self) {
   OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
-  OFNumber           *clientId	= nil;
+  RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
+  OFNumber           *clientId  = nil;
   VALUE               rb_client_id;
 
   clientId      = [riakpb getClientId];
   rb_client_id  = [clientId toRuby];
 
-	[pool drain];
+  [pool drain];
   return rb_client_id;
 }
 
@@ -38,7 +38,7 @@ VALUE rb_get_server_info_request(VALUE self) {
   serverInfo      = [riakpb getServerInfo];
   rb_server_info  = [serverInfo toRuby];
 
-	[pool drain];
+  [pool drain];
   return rb_server_info;
 }
 
@@ -49,9 +49,9 @@ VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
   VALUE               rb_key      = rb_hash_new(),
                       rb_vclock   = Qnil,
                       rb_contents = Qnil;
-  OFDictionary       *key					= nil;
-  OFString           *vclock			= nil;
-  OFDataArray        *contents		= nil;
+  OFDictionary       *key          = nil;
+  OFString           *vclock      = nil;
+  OFDataArray        *contents    = nil;
 
   // @TODO: Allow the quorum to be set
   key         = [riakpb getKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
@@ -90,26 +90,26 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   Check_Type(key_name,    T_STRING);
   Check_Type(rb_content,  T_HASH);
 
-  OFAutoreleasePool    *pool        		= [[OFAutoreleasePool alloc] init];
-  RiakProtobuf         *riakpb      		= Get_RiakProtobuf(self);
-  VALUE                 rb_vclock   		= Qnil,
-                        rb_tmp	    		= Qnil,
-                        rb_return   		= Qnil;
+  OFAutoreleasePool    *pool            = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf         *riakpb          = Get_RiakProtobuf(self);
+  VALUE                 rb_vclock       = Qnil,
+                        rb_tmp          = Qnil,
+                        rb_return       = Qnil;
   OFDictionary         *key;
-  OFDataArray					 *links						= nil,
-                       *metas						= nil;
-  OFString						 *vClock					= nil,
-                       *contentValue		= nil,
-                       *contentType			= nil,
-                       *contentCharset	= nil,
-                       *contentEncoding	= nil;
-  int                   quorum					= 0,
-                        commit					= 0;
-  BOOL                  returnBody  		= YES;
+  OFDataArray           *links            = nil,
+                       *metas            = nil;
+  OFString             *vClock          = nil,
+                       *contentValue    = nil,
+                       *contentType      = nil,
+                       *contentCharset  = nil,
+                       *contentEncoding  = nil;
+  int                   quorum          = 0,
+                        commit          = 0;
+  BOOL                  returnBody      = YES;
 
-  if(rb_quorum 		!= Qnil) 		quorum      = FIX2INT(rb_quorum);
-  if(rb_commit 		!= Qnil) 		commit      = FIX2INT(rb_commit);
-  if(return_body 	== Qfalse)	returnBody 	= NO;
+  if(rb_quorum     != Qnil)     quorum      = FIX2INT(rb_quorum);
+  if(rb_commit     != Qnil)     commit      = FIX2INT(rb_commit);
+  if(return_body   == Qfalse)  returnBody   = NO;
 
   if(vclock != Qnil) {
     Check_Type(vclock, T_STRING);
@@ -150,39 +150,39 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
     for(iter = 0; iter < RARRAY_LEN(rb_tmp); iter++) {
 
-      VALUE 			rb_link_hash_tmp 	= rb_ary_entry(rb_tmp, iter);
-      VALUE				rb_link_elem_tmp;
-      OFString	 *link_bucket				= nil,
-      					 *link_key					= nil,
-      					 *link_tag					= nil;
+      VALUE       rb_link_hash_tmp   = rb_ary_entry(rb_tmp, iter);
+      VALUE        rb_link_elem_tmp;
+      OFString   *link_bucket        = nil,
+                 *link_key          = nil,
+                 *link_tag          = nil;
       
       Check_Type(rb_link_hash_tmp, T_HASH);
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("bucket")));
 
-			if(rb_link_elem_tmp != Qnil) {
+      if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_bucket	= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_bucket  = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("key")));
 
-			if(rb_link_elem_tmp != Qnil) {
+      if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_key 		= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_key     = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("tag")));
 
-			if(rb_link_elem_tmp != Qnil) {
+      if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_tag		= RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_tag    = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
       [links addItem:[OFDictionary dictionaryWithKeysAndObjects:
-                   	  @"bucket", link_bucket,
-                   	  @"key",		link_key,
-                      @"tag",		link_tag,
+                       @"bucket", link_bucket,
+                       @"key",    link_key,
+                      @"tag",    link_tag,
                       nil]];
     }
   }
@@ -197,25 +197,25 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
     metas = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
 
     for(iter = 0; iter < RARRAY_LEN(rb_tmp); iter++) {
-      VALUE 			rb_uMeta_hash_tmp = rb_ary_entry(rb_tmp, iter);
-      VALUE				rb_uMeta_elem_tmp;
-      OFString	 *uMeta_key;
-      OFString	 *uMeta_value;
+      VALUE       rb_uMeta_hash_tmp = rb_ary_entry(rb_tmp, iter);
+      VALUE        rb_uMeta_elem_tmp;
+      OFString   *uMeta_key;
+      OFString   *uMeta_value;
 
       Check_Type(rb_uMeta_hash_tmp, T_HASH);
 
       rb_uMeta_elem_tmp = rb_hash_aref(rb_uMeta_hash_tmp, ID2SYM(rb_intern("key")));
 
-			if(rb_uMeta_elem_tmp != Qnil) {
+      if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
-        uMeta_key 	= RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        uMeta_key   = RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
-        uMeta_key 	= nil;
+        uMeta_key   = nil;
       }
 
       rb_uMeta_elem_tmp = rb_hash_aref(rb_uMeta_hash_tmp, ID2SYM(rb_intern("value")));
 
-			if(rb_uMeta_elem_tmp != Qnil) {
+      if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
         uMeta_value = RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
@@ -234,12 +234,12 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
                inBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                  vClock:vClock
                 content:[OFDictionary dictionaryWithKeysAndObjects:
-                         @"value", 						contentValue,
-                         @"content_type", 		contentType,
-                         @"charset", 					contentCharset,
+                         @"value",             contentValue,
+                         @"content_type",     contentType,
+                         @"charset",           contentCharset,
                          @"content_encoding", contentEncoding,
-                         @"links", 						links,
-                         @"user_meta", 				metas,
+                         @"links",             links,
+                         @"user_meta",         metas,
                          nil]
                  quorum:quorum
                  commit:commit
@@ -259,10 +259,10 @@ VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw
   Check_Type(key_name,    T_STRING);
 
   VALUE rb_return;
-	int 	replicas;
+  int   replicas;
   
-  if(rw != Qnil) 	replicas = FIX2INT(rw);
-  else						replicas = 0;
+  if(rw != Qnil)   replicas = FIX2INT(rw);
+  else            replicas = 0;
 
   OFAutoreleasePool  *pool  = [[OFAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
@@ -270,9 +270,9 @@ VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw
   if([riakpb deleteKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
             fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
               replicas:replicas])
-  	rb_return	= Qtrue;
+    rb_return  = Qtrue;
   else
-    rb_return	= Qfalse;
+    rb_return  = Qfalse;
 
   [pool drain];
   return rb_return;
@@ -283,7 +283,7 @@ VALUE rb_list_buckets_request(VALUE self) {
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
   VALUE bucketList;
 
-  bucketList	= [[riakpb listBucketsRequest]
+  bucketList  = [[riakpb listBucketsRequest]
                  toRuby];
 
   [pool drain];
@@ -307,19 +307,19 @@ VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
 }
 
 VALUE rb_get_bucket_request(VALUE self, VALUE bucket_name) {
-
-	Check_Type(bucket_name, T_STRING);
-
-  OFAutoreleasePool  *pool 		= [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb 	= Get_RiakProtobuf(self);
-
+  
+  Check_Type(bucket_name, T_STRING);
+  
+  OFAutoreleasePool  *pool     = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb   = Get_RiakProtobuf(self);
+  
   OFDictionary       *bucketProperties;
   VALUE               rb_bucket_props;
-
-	bucketProperties  = [riakpb getBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
+  
+  bucketProperties  = [riakpb getBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
   rb_bucket_props   = [bucketProperties toRubyWithSymbolicKeys];
-
-	[pool drain];
+  
+  [pool drain];
   return rb_bucket_props;
 }
 
@@ -327,16 +327,16 @@ VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE al
 
   Check_Type(bucket_name, T_STRING);
 
-  OFAutoreleasePool  *pool    	= [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
+  OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
   VALUE               rb_did_set;
-	uint32_t						nVal			= 0;
-  BOOL								allowMult	=	NO;
+  uint32_t            nVal      = 0;
+  BOOL                allowMult  =  NO;
 
-  if(n_val 			!= Qnil)	nVal 			= FIX2UINT(n_val);
-  if(allow_mult == Qtrue)	allowMult = YES;
+  if(n_val       != Qnil)  nVal       = FIX2UINT(n_val);
+  if(allow_mult == Qtrue)  allowMult = YES;
 
-	if([riakpb setForBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+  if([riakpb setForBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                      nVal:nVal
                 allowMult:allowMult])
     rb_did_set = Qtrue;
@@ -351,8 +351,8 @@ VALUE rb_map_reduce_request(VALUE self, VALUE rb_request, VALUE rb_content_type)
   Check_Type(rb_request, T_STRING);
   Check_Type(rb_content_type, T_STRING);
 
-  OFAutoreleasePool  *pool    	= [[OFAutoreleasePool alloc] init];
-  RiakProtobuf       *riakpb  	= Get_RiakProtobuf(self);
+  OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
+  RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
   VALUE               rb_mapred = rb_hash_new();
 
   rb_mapred = [[riakpb mapReduceRequest:RString_To_OFString(rb_request,       OF_STRING_ENCODING_UTF_8)
