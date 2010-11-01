@@ -1,0 +1,324 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A016AA0912261F47004F6B52 /* riakclient.pb.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = A016AA0712261F47004F6B52 /* riakclient.pb.h */; };
+		A06D14DB126A97350074E61B /* rb_pabst.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14D8126A97350074E61B /* rb_pabst.m */; };
+		A06D14DC126A97350074E61B /* rb_riakpb.m in Sources */ = {isa = PBXBuildFile; fileRef = A06D14DA126A97350074E61B /* rb_riakpb.m */; };
+		A06D14E3126A97490074E61B /* riakclient.pb.mm in Sources */ = {isa = PBXBuildFile; fileRef = A06D14DE126A97490074E61B /* riakclient.pb.mm */; };
+		A06D14E4126A97490074E61B /* RiakProtobuf.mm in Sources */ = {isa = PBXBuildFile; fileRef = A06D14E1126A97490074E61B /* RiakProtobuf.mm */; };
+		A06D1574126AB9B10074E61B /* RiakProtobuf+Cpp.mm in Sources */ = {isa = PBXBuildFile; fileRef = A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */; };
+		A0A72BD6122636B7006C6D76 /* libprotobuf-lite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */; };
+		A0A72BD7122636B7006C6D76 /* libprotobuf.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */; };
+		A0A72BD8122636B7006C6D76 /* libprotoc.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = A0A72BD5122636B7006C6D76 /* libprotoc.dylib */; };
+		E507E0CF127633B30012EB42 /* Foundation+RubyValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E507E0CE127633B30012EB42 /* Foundation+RubyValue.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A016A9F312261F15004F6B52 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				A016AA0912261F47004F6B52 /* riakclient.pb.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		A016A9F512261F15004F6B52 /* riak_pb-objc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "riak_pb-objc"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A016AA0012261F16004F6B52 /* riak_pb_objc_Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = riak_pb_objc_Prefix.pch; sourceTree = "<group>"; };
+		A016AA0712261F47004F6B52 /* riakclient.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riakclient.pb.h; sourceTree = "<group>"; };
+		A06D14D1126A97350074E61B /* Foundation+RubyValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Foundation+RubyValue.h"; sourceTree = "<group>"; };
+		A06D14D7126A97350074E61B /* rb_pabst.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rb_pabst.h; sourceTree = "<group>"; };
+		A06D14D8126A97350074E61B /* rb_pabst.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rb_pabst.m; sourceTree = "<group>"; };
+		A06D14D9126A97350074E61B /* rb_riakpb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rb_riakpb.h; sourceTree = "<group>"; };
+		A06D14DA126A97350074E61B /* rb_riakpb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = rb_riakpb.m; sourceTree = "<group>"; };
+		A06D14DD126A97490074E61B /* extconf.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = extconf.rb; sourceTree = "<group>"; };
+		A06D14DE126A97490074E61B /* riakclient.pb.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = riakclient.pb.mm; sourceTree = "<group>"; };
+		A06D14DF126A97490074E61B /* riakclient.proto */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = riakclient.proto; sourceTree = "<group>"; };
+		A06D14E0126A97490074E61B /* RiakProtobuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RiakProtobuf.h; sourceTree = "<group>"; };
+		A06D14E1126A97490074E61B /* RiakProtobuf.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RiakProtobuf.mm; sourceTree = "<group>"; };
+		A06D14E2126A97490074E61B /* tst.rb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.ruby; path = tst.rb; sourceTree = "<group>"; };
+		A06D1572126AB9B10074E61B /* RiakProtobuf+Cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RiakProtobuf+Cpp.h"; sourceTree = "<group>"; };
+		A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "RiakProtobuf+Cpp.mm"; sourceTree = "<group>"; };
+		A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libprotobuf-lite.dylib"; path = "/usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf-lite.dylib"; sourceTree = "<absolute>"; };
+		A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotobuf.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotobuf.dylib; sourceTree = "<absolute>"; };
+		A0A72BD5122636B7006C6D76 /* libprotoc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libprotoc.dylib; path = /usr/local/Cellar/protobuf/2.3.0/lib/libprotoc.dylib; sourceTree = "<absolute>"; };
+		E507E0CE127633B30012EB42 /* Foundation+RubyValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Foundation+RubyValue.m"; sourceTree = "<group>"; };
+		E546F9011236EAE40016B07A /* MessageCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageCodes.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A016A9F212261F15004F6B52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0A72BD6122636B7006C6D76 /* libprotobuf-lite.dylib in Frameworks */,
+				A0A72BD7122636B7006C6D76 /* libprotobuf.dylib in Frameworks */,
+				A0A72BD8122636B7006C6D76 /* libprotoc.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A016A9E812261F15004F6B52 = {
+			isa = PBXGroup;
+			children = (
+				A016A9EF12261F15004F6B52 /* ns-ext */,
+				A016A9F012261F15004F6B52 /* Documentation */,
+				A016A9F612261F15004F6B52 /* Products */,
+				A016A9F812261F15004F6B52 /* Frameworks */,
+				A016A9FF12261F16004F6B52 /* Other Sources */,
+			);
+			sourceTree = "<group>";
+		};
+		A016A9EF12261F15004F6B52 /* ns-ext */ = {
+			isa = PBXGroup;
+			children = (
+				A07BF8921274DB69000F43EF /* Objective-C++ */,
+				A07BF8911274DB62000F43EF /* Objective-C */,
+				A07BF8901274DB5D000F43EF /* Ruby */,
+				A06D14DF126A97490074E61B /* riakclient.proto */,
+			);
+			name = "ns-ext";
+			sourceTree = "<group>";
+		};
+		A016A9F012261F15004F6B52 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+		A016A9F612261F15004F6B52 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A016A9F512261F15004F6B52 /* riak_pb-objc */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A016A9F812261F15004F6B52 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A0A72BD3122636B7006C6D76 /* libprotobuf-lite.dylib */,
+				A0A72BD4122636B7006C6D76 /* libprotobuf.dylib */,
+				A0A72BD5122636B7006C6D76 /* libprotoc.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A016A9FF12261F16004F6B52 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				A016AA0012261F16004F6B52 /* riak_pb_objc_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		A07BF8901274DB5D000F43EF /* Ruby */ = {
+			isa = PBXGroup;
+			children = (
+				A06D14DD126A97490074E61B /* extconf.rb */,
+				A06D14E2126A97490074E61B /* tst.rb */,
+			);
+			name = Ruby;
+			sourceTree = "<group>";
+		};
+		A07BF8911274DB62000F43EF /* Objective-C */ = {
+			isa = PBXGroup;
+			children = (
+				A06D14D1126A97350074E61B /* Foundation+RubyValue.h */,
+				E507E0CE127633B30012EB42 /* Foundation+RubyValue.m */,
+				A06D14D7126A97350074E61B /* rb_pabst.h */,
+				A06D14D8126A97350074E61B /* rb_pabst.m */,
+				A06D14D9126A97350074E61B /* rb_riakpb.h */,
+				A06D14DA126A97350074E61B /* rb_riakpb.m */,
+			);
+			name = "Objective-C";
+			sourceTree = "<group>";
+		};
+		A07BF8921274DB69000F43EF /* Objective-C++ */ = {
+			isa = PBXGroup;
+			children = (
+				E546F9011236EAE40016B07A /* MessageCodes.h */,
+				A016AA0712261F47004F6B52 /* riakclient.pb.h */,
+				A06D14DE126A97490074E61B /* riakclient.pb.mm */,
+				A06D14E0126A97490074E61B /* RiakProtobuf.h */,
+				A06D14E1126A97490074E61B /* RiakProtobuf.mm */,
+				A06D1572126AB9B10074E61B /* RiakProtobuf+Cpp.h */,
+				A06D1573126AB9B10074E61B /* RiakProtobuf+Cpp.mm */,
+			);
+			name = "Objective-C++";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A016A9F412261F15004F6B52 /* pabst */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A016AA0312261F16004F6B52 /* Build configuration list for PBXNativeTarget "pabst" */;
+			buildPhases = (
+				A016A9F112261F15004F6B52 /* Sources */,
+				A016A9F212261F15004F6B52 /* Frameworks */,
+				A016A9F312261F15004F6B52 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = pabst;
+			productName = "riak_pb-objc";
+			productReference = A016A9F512261F15004F6B52 /* riak_pb-objc */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A016A9EA12261F15004F6B52 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Inherently Lame Studios, Inc.";
+			};
+			buildConfigurationList = A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "pabst" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = A016A9E812261F15004F6B52;
+			productRefGroup = A016A9F612261F15004F6B52 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A016A9F412261F15004F6B52 /* pabst */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A016A9F112261F15004F6B52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A06D14DB126A97350074E61B /* rb_pabst.m in Sources */,
+				A06D14DC126A97350074E61B /* rb_riakpb.m in Sources */,
+				A06D14E3126A97490074E61B /* riakclient.pb.mm in Sources */,
+				A06D14E4126A97490074E61B /* RiakProtobuf.mm in Sources */,
+				A06D1574126AB9B10074E61B /* RiakProtobuf+Cpp.mm in Sources */,
+				E507E0CF127633B30012EB42 /* Foundation+RubyValue.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A016AA0112261F16004F6B52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
+				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "/usr/local/Cellar/protobuf/2.3.0/include/**";
+				ONLY_ACTIVE_ARCH = YES;
+				"OTHER_CFLAGS[arch=*]" = "";
+				OTHER_LDFLAGS = "-lcrypto";
+				PREBINDING = NO;
+			};
+			name = Debug;
+		};
+		A016AA0212261F16004F6B52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_VERSION = 4.2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = "/usr/local/Cellar/protobuf/2.3.0/include/**";
+				"OTHER_CFLAGS[arch=*]" = "";
+				OTHER_LDFLAGS = "-lcrypto";
+				PREBINDING = NO;
+			};
+			name = Release;
+		};
+		A016AA0412261F16004F6B52 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = riak_pb_objc_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/protobuf/2.3.0/lib,
+				);
+				PRODUCT_NAME = "riak_pb-objc";
+			};
+			name = Debug;
+		};
+		A016AA0512261F16004F6B52 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = riak_pb_objc_Prefix.pch;
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/protobuf/2.3.0/lib,
+				);
+				PRODUCT_NAME = "riak_pb-objc";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A016A9ED12261F15004F6B52 /* Build configuration list for PBXProject "pabst" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A016AA0112261F16004F6B52 /* Debug */,
+				A016AA0212261F16004F6B52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A016AA0312261F16004F6B52 /* Build configuration list for PBXNativeTarget "pabst" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A016AA0412261F16004F6B52 /* Debug */,
+				A016AA0512261F16004F6B52 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A016A9EA12261F15004F6B52 /* Project object */;
+}

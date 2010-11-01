@@ -68,14 +68,14 @@
       error.ParseFromArray(message, msgLength);
 
       [pool drain];
-      @throw [ErrorResponseException newWithClass:isa
-                                     errorCString:error.errmsg().c_str()
-                                        errorCode:error.errcode()];
+      @throw [NSException exceptionWithName:@"ErrorResponse"
+                                     reason:@"Unknown Exception Occured. Expected Message Code not received, yet an Error was not indicated. Bug?"
+                                   userInfo:nil];
     } else {
       [pool drain];
-      @throw [ErrorResponseException newWithClass:isa
-                                      errorString:@"Unknown Exception Occured. Expected Message Code not received, yet an Error was not indicated. Bug?"
-                                        errorCode:-1];
+      @throw [NSException exceptionWithName:@"ErrorResponse"
+                                     reason:@"Unknown Exception Occured. Expected Message Code not received, yet an Error was not indicated. Bug?"
+                                   userInfo:nil];
     }
     [pool drain];
   }

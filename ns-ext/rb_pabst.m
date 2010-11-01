@@ -8,8 +8,8 @@ VALUE rb_ping_request(VALUE self) {
     if([riakpb pingRiak])
       return Qtrue;
   }
-  @catch (OFException *e) {
-    rb_raise(rb_eRuntimeError, "Caught: %s", [[e string] cString]);
+  @catch (NSException *e) {
+    rb_raise(rb_eRuntimeError, "Caught: %s", [[e reason] UTF8String]);
     [e dealloc];
   }
 
@@ -17,9 +17,9 @@ VALUE rb_ping_request(VALUE self) {
 }
 
 VALUE rb_get_client_id_request(VALUE self) {
-  OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool      = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
-  OFNumber           *clientId  = nil;
+  NSNumber           *clientId  = nil;
   VALUE               rb_client_id;
 
   clientId      = [riakpb getClientId];
@@ -30,32 +30,32 @@ VALUE rb_get_client_id_request(VALUE self) {
 }
 
 VALUE rb_get_server_info_request(VALUE self) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool    = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
-  OFDictionary       *serverInfo;
+  NSDictionary       *serverInfo;
   VALUE               rb_server_info;
 
   serverInfo      = [riakpb getServerInfo];
   rb_server_info  = [serverInfo toRuby];
-
+  
   [pool drain];
   return rb_server_info;
 }
 
 VALUE rb_get_key_request(VALUE self, VALUE bucket_name, VALUE key_name) {
-  OFAutoreleasePool  *pool        = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool        = [[NSAutoreleasePool alloc] init];
 
   RiakProtobuf       *riakpb      = Get_RiakProtobuf(self);
   VALUE               rb_key      = rb_hash_new(),
                       rb_vclock   = Qnil,
                       rb_contents = Qnil;
-  OFDictionary       *key          = nil;
-  OFString           *vclock      = nil;
-  OFDataArray        *contents    = nil;
+  NSDictionary       *key          = nil;
+  NSString           *vclock      = nil;
+  NSMutableSet        *contents    = nil;
 
   // @TODO: Allow the quorum to be set
-  key         = [riakpb getKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
-                    fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+  key         = [riakpb getKey:RString_To_NSString(key_name,     OF_STRING_ENCODING_UTF_8)
+                    fromBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                         quorum:0]; // @TODO: Don't hardcode the quorum, yo
 
   vclock      = [key objectForKey:@"vclock"];
@@ -90,15 +90,15 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   Check_Type(key_name,    T_STRING);
   Check_Type(rb_content,  T_HASH);
 
-  OFAutoreleasePool    *pool            = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool    *pool            = [[NSAutoreleasePool alloc] init];
   RiakProtobuf         *riakpb          = Get_RiakProtobuf(self);
   VALUE                 rb_vclock       = Qnil,
                         rb_tmp          = Qnil,
                         rb_return       = Qnil;
-  OFDictionary         *key;
-  OFDataArray           *links            = nil,
+  NSDictionary         *key;
+  NSMutableSet           *links            = nil,
                        *metas            = nil;
-  OFString             *vClock          = nil,
+  NSString             *vClock          = nil,
                        *contentValue    = nil,
                        *contentType      = nil,
                        *contentCharset  = nil,
@@ -113,31 +113,31 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
   if(vclock != Qnil) {
     Check_Type(vclock, T_STRING);
-    vClock = RString_To_OFString(rb_vclock, OF_STRING_ENCODING_ISO_8859_15);
+    vClock = RString_To_NSString(rb_vclock, OF_STRING_ENCODING_ISO_8859_15);
   }
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("value")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
-    contentValue = RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8);
+    contentValue = RString_To_NSString(rb_tmp, OF_STRING_ENCODING_UTF_8);
   }
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_type")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
-    contentType = RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8);
+    contentType = RString_To_NSString(rb_tmp, OF_STRING_ENCODING_UTF_8);
   }
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("charset")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
-    contentCharset = RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8);
+    contentCharset = RString_To_NSString(rb_tmp, OF_STRING_ENCODING_UTF_8);
   }
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("content_encoding")));
   if(rb_tmp != Qnil) {
     Check_Type(rb_tmp, T_STRING);
-    contentEncoding = RString_To_OFString(rb_tmp, OF_STRING_ENCODING_UTF_8);
+    contentEncoding = RString_To_NSString(rb_tmp, OF_STRING_ENCODING_UTF_8);
   }
 
   rb_tmp = rb_hash_aref(rb_content, ID2SYM(rb_intern("links")));
@@ -146,13 +146,13 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
     int iter;
 
-    links = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
+    links = [NSMutableSet dataArrayWithItemSize:sizeof(NSDictionary)];
 
     for(iter = 0; iter < RARRAY_LEN(rb_tmp); iter++) {
 
       VALUE       rb_link_hash_tmp   = rb_ary_entry(rb_tmp, iter);
       VALUE        rb_link_elem_tmp;
-      OFString   *link_bucket        = nil,
+      NSString   *link_bucket        = nil,
                  *link_key          = nil,
                  *link_tag          = nil;
       
@@ -162,24 +162,24 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
       if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_bucket  = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_bucket  = RString_To_NSString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("key")));
 
       if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_key     = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_key     = RString_To_NSString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
       rb_link_elem_tmp = rb_hash_aref(rb_link_hash_tmp, ID2SYM(rb_intern("tag")));
 
       if(rb_link_elem_tmp != Qnil) {
         Check_Type(rb_link_elem_tmp, T_STRING);
-        link_tag    = RString_To_OFString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        link_tag    = RString_To_NSString(rb_link_elem_tmp, OF_STRING_ENCODING_UTF_8);
       }
 
-      [links addItem:[OFDictionary dictionaryWithKeysAndObjects:
+      [links addItem:[NSDictionary dictionaryWithKeysAndObjects:
                        @"bucket", link_bucket,
                        @"key",    link_key,
                       @"tag",    link_tag,
@@ -194,13 +194,13 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
     int iter;
 
-    metas = [OFDataArray dataArrayWithItemSize:sizeof(OFDictionary)];
+    metas = [NSMutableSet dataArrayWithItemSize:sizeof(NSDictionary)];
 
     for(iter = 0; iter < RARRAY_LEN(rb_tmp); iter++) {
       VALUE       rb_uMeta_hash_tmp = rb_ary_entry(rb_tmp, iter);
       VALUE        rb_uMeta_elem_tmp;
-      OFString   *uMeta_key;
-      OFString   *uMeta_value;
+      NSString   *uMeta_key;
+      NSString   *uMeta_value;
 
       Check_Type(rb_uMeta_hash_tmp, T_HASH);
 
@@ -208,7 +208,7 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
       if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
-        uMeta_key   = RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        uMeta_key   = RString_To_NSString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         uMeta_key   = nil;
       }
@@ -217,12 +217,12 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
 
       if(rb_uMeta_elem_tmp != Qnil) {
         Check_Type(rb_uMeta_elem_tmp, T_STRING);
-        uMeta_value = RString_To_OFString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
+        uMeta_value = RString_To_NSString(rb_uMeta_elem_tmp, OF_STRING_ENCODING_UTF_8);
       } else {
         uMeta_value = nil;
       }
 
-      [metas addItem:[OFDictionary dictionaryWithKeysAndObjects:
+      [metas addItem:[NSDictionary dictionaryWithKeysAndObjects:
                        @"key",    uMeta_key,
                        @"value",  uMeta_value,
                        nil]];
@@ -230,10 +230,10 @@ VALUE rb_put_key_request(VALUE self,   VALUE bucket_name,  VALUE key_name,   VAL
   }
 
   // @TODO: Check the Ruby encoding and set it accordingly
-  key =  [riakpb putKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
-               inBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+  key =  [riakpb putKey:RString_To_NSString(key_name,     OF_STRING_ENCODING_UTF_8)
+               inBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                  vClock:vClock
-                content:[OFDictionary dictionaryWithKeysAndObjects:
+                content:[NSDictionary dictionaryWithKeysAndObjects:
                          @"value",             contentValue,
                          @"content_type",     contentType,
                          @"charset",           contentCharset,
@@ -264,11 +264,11 @@ VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw
   if(rw != Qnil)   replicas = FIX2INT(rw);
   else            replicas = 0;
 
-  OFAutoreleasePool  *pool  = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool  = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
 
-  if([riakpb deleteKey:RString_To_OFString(key_name,     OF_STRING_ENCODING_UTF_8)
-            fromBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+  if([riakpb deleteKey:RString_To_NSString(key_name,     OF_STRING_ENCODING_UTF_8)
+            fromBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)
               replicas:replicas])
     rb_return  = Qtrue;
   else
@@ -279,7 +279,7 @@ VALUE rb_del_key_request(VALUE self, VALUE bucket_name, VALUE key_name, VALUE rw
 }
 
 VALUE rb_list_buckets_request(VALUE self) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool    = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
   VALUE bucketList;
 
@@ -291,14 +291,14 @@ VALUE rb_list_buckets_request(VALUE self) {
 }
 
 VALUE rb_list_keys_request(VALUE self, VALUE bucket_name) {
-  OFAutoreleasePool  *pool    = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool    = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb  = Get_RiakProtobuf(self);
-  OFDataArray        *keys;
+  NSMutableSet        *keys;
   VALUE               rb_keys;
 
   // @TODO: Ensure that bucket name is a String, or call :to_s. Raise intelligent exception if that fails
   // @TODO: Figure out how to get the encoding of the String. Assumption is a UTF-8 encoding, for now.
-  keys        = [riakpb listKeysInBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
+  keys        = [riakpb listKeysInBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
 
   rb_keys     = [keys toRuby];
 
@@ -310,13 +310,13 @@ VALUE rb_get_bucket_request(VALUE self, VALUE bucket_name) {
 
   Check_Type(bucket_name, T_STRING);
 
-  OFAutoreleasePool  *pool     = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool     = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb   = Get_RiakProtobuf(self);
 
-  OFDictionary       *bucketProperties;
+  NSDictionary       *bucketProperties;
   VALUE               rb_bucket_props;
 
-  bucketProperties  = [riakpb getBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
+  bucketProperties  = [riakpb getBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)];
   rb_bucket_props   = [bucketProperties toRubyWithSymbolicKeys];
 
   [pool drain];
@@ -327,7 +327,7 @@ VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE al
 
   Check_Type(bucket_name, T_STRING);
 
-  OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool      = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
   VALUE               rb_did_set;
   uint32_t            nVal      = 0;
@@ -336,7 +336,7 @@ VALUE rb_set_bucket_request(VALUE self, VALUE bucket_name, VALUE n_val, VALUE al
   if(n_val       != Qnil)  nVal       = FIX2UINT(n_val);
   if(allow_mult == Qtrue)  allowMult = YES;
 
-  if([riakpb setForBucket:RString_To_OFString(bucket_name,  OF_STRING_ENCODING_UTF_8)
+  if([riakpb setForBucket:RString_To_NSString(bucket_name,  OF_STRING_ENCODING_UTF_8)
                      nVal:nVal
                 allowMult:allowMult])
     rb_did_set = Qtrue;
@@ -351,12 +351,12 @@ VALUE rb_map_reduce_request(VALUE self, VALUE rb_request, VALUE rb_content_type)
   Check_Type(rb_request, T_STRING);
   Check_Type(rb_content_type, T_STRING);
 
-  OFAutoreleasePool  *pool      = [[OFAutoreleasePool alloc] init];
+  NSAutoreleasePool  *pool      = [[NSAutoreleasePool alloc] init];
   RiakProtobuf       *riakpb    = Get_RiakProtobuf(self);
   VALUE               rb_mapred = rb_hash_new();
 
-  rb_mapred = [[riakpb mapReduceRequest:RString_To_OFString(rb_request,       OF_STRING_ENCODING_UTF_8)
-                          ofContentType:RString_To_OFString(rb_content_type,  OF_STRING_ENCODING_UTF_8)]
+  rb_mapred = [[riakpb mapReduceRequest:RString_To_NSString(rb_request,       OF_STRING_ENCODING_UTF_8)
+                          ofContentType:RString_To_NSString(rb_content_type,  OF_STRING_ENCODING_UTF_8)]
                toRuby];
 
   [pool drain];
