@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		E5AE0B79135F9A5900F8AAFD /* pabst.h in Headers */ = {isa = PBXBuildFile; fileRef = E5AE0B78135F9A5900F8AAFD /* pabst.h */; };
-		E5AE0B7C135F9A5900F8AAFD /* pabst.cp in Sources */ = {isa = PBXBuildFile; fileRef = E5AE0B7B135F9A5900F8AAFD /* pabst.cp */; };
+		E5AE0B7C135F9A5900F8AAFD /* pabst.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5AE0B7B135F9A5900F8AAFD /* pabst.cpp */; };
 		E5AE0B93135FADB900F8AAFD /* pabst_content.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E5AE0B91135FADB900F8AAFD /* pabst_content.cpp */; };
 		E5AE0B96135FB68500F8AAFD /* message_codes.h in Headers */ = {isa = PBXBuildFile; fileRef = E5AE0B95135FB68500F8AAFD /* message_codes.h */; };
 		E5AE0BA7135FD44E00F8AAFD /* riakclient.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = E5AE0B83135F9CDF00F8AAFD /* riakclient.pb.h */; };
@@ -21,7 +21,7 @@
 		E5AE0B76135F9A5900F8AAFD /* pabstProj.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstProj.xcconfig; sourceTree = "<group>"; };
 		E5AE0B77135F9A5900F8AAFD /* pabstTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstTarget.xcconfig; sourceTree = "<group>"; };
 		E5AE0B78135F9A5900F8AAFD /* pabst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pabst.h; sourceTree = "<group>"; };
-		E5AE0B7B135F9A5900F8AAFD /* pabst.cp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pabst.cp; sourceTree = "<group>"; };
+		E5AE0B7B135F9A5900F8AAFD /* pabst.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pabst.cpp; sourceTree = "<group>"; };
 		E5AE0B82135F9CDF00F8AAFD /* riakclient.pb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = riakclient.pb.cpp; sourceTree = "<group>"; };
 		E5AE0B83135F9CDF00F8AAFD /* riakclient.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riakclient.pb.h; sourceTree = "<group>"; };
 		E5AE0B91135FADB900F8AAFD /* pabst_content.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pabst_content.cpp; sourceTree = "<group>"; };
@@ -66,7 +66,7 @@
 				E5AE0B76135F9A5900F8AAFD /* pabstProj.xcconfig */,
 				E5AE0B77135F9A5900F8AAFD /* pabstTarget.xcconfig */,
 				E5AE0B78135F9A5900F8AAFD /* pabst.h */,
-				E5AE0B7B135F9A5900F8AAFD /* pabst.cp */,
+				E5AE0B7B135F9A5900F8AAFD /* pabst.cpp */,
 				E5AE0B91135FADB900F8AAFD /* pabst_content.cpp */,
 				E5AE0B95135FB68500F8AAFD /* message_codes.h */,
 			);
@@ -133,7 +133,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E5AE0B7C135F9A5900F8AAFD /* pabst.cp in Sources */,
+				E5AE0B7C135F9A5900F8AAFD /* pabst.cpp in Sources */,
 				E5AE0B93135FADB900F8AAFD /* pabst_content.cpp in Sources */,
 				E5AE0BA8135FD54E00F8AAFD /* riakclient.pb.cpp in Sources */,
 			);
