@@ -21,7 +21,6 @@
 		E5AE0B76135F9A5900F8AAFD /* pabstProj.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstProj.xcconfig; sourceTree = "<group>"; };
 		E5AE0B77135F9A5900F8AAFD /* pabstTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstTarget.xcconfig; sourceTree = "<group>"; };
 		E5AE0B78135F9A5900F8AAFD /* pabst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pabst.h; sourceTree = "<group>"; };
-		E5AE0B7A135F9A5900F8AAFD /* pabstPriv.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pabstPriv.h; sourceTree = "<group>"; };
 		E5AE0B7B135F9A5900F8AAFD /* pabst.cp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pabst.cp; sourceTree = "<group>"; };
 		E5AE0B82135F9CDF00F8AAFD /* riakclient.pb.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = riakclient.pb.cpp; sourceTree = "<group>"; };
 		E5AE0B83135F9CDF00F8AAFD /* riakclient.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = riakclient.pb.h; sourceTree = "<group>"; };
@@ -67,7 +66,6 @@
 				E5AE0B76135F9A5900F8AAFD /* pabstProj.xcconfig */,
 				E5AE0B77135F9A5900F8AAFD /* pabstTarget.xcconfig */,
 				E5AE0B78135F9A5900F8AAFD /* pabst.h */,
-				E5AE0B7A135F9A5900F8AAFD /* pabstPriv.h */,
 				E5AE0B7B135F9A5900F8AAFD /* pabst.cp */,
 				E5AE0B91135FADB900F8AAFD /* pabst_content.cpp */,
 				E5AE0B95135FB68500F8AAFD /* message_codes.h */,
