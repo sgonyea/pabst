@@ -18,7 +18,6 @@
 
 /* Begin PBXFileReference section */
 		E5AE0B71135F9A5900F8AAFD /* pabst.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pabst.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		E5AE0B75135F9A5900F8AAFD /* pabst-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "pabst-Prefix.pch"; sourceTree = "<group>"; };
 		E5AE0B76135F9A5900F8AAFD /* pabstProj.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstProj.xcconfig; sourceTree = "<group>"; };
 		E5AE0B77135F9A5900F8AAFD /* pabstTarget.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = pabstTarget.xcconfig; sourceTree = "<group>"; };
 		E5AE0B78135F9A5900F8AAFD /* pabst.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pabst.h; sourceTree = "<group>"; };
@@ -70,19 +69,10 @@
 				E5AE0B78135F9A5900F8AAFD /* pabst.h */,
 				E5AE0B7A135F9A5900F8AAFD /* pabstPriv.h */,
 				E5AE0B7B135F9A5900F8AAFD /* pabst.cp */,
-				E5AE0B74135F9A5900F8AAFD /* Supporting Files */,
 				E5AE0B91135FADB900F8AAFD /* pabst_content.cpp */,
 				E5AE0B95135FB68500F8AAFD /* message_codes.h */,
 			);
 			path = pabst;
-			sourceTree = "<group>";
-		};
-		E5AE0B74135F9A5900F8AAFD /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				E5AE0B75135F9A5900F8AAFD /* pabst-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
